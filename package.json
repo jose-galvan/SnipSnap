@@ -1,0 +1,30 @@
+{
+  "name": "chopchop",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c '#FF9800,#7E2D40' 'cd packages/server && npm run dev' 'cd packages/client && npm run dev'",
+    "dev-server": "cd packages/server && npm run dev",
+    "dev-client": "cd packages/client && npm run dev",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint-and-format": "npm run lint:fix && npm run format"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.39.1"
+  }
+}
