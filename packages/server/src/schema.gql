@@ -4,7 +4,7 @@
 
 type UrlType {
   id: String!
-  slug: String!
+  slug: String
   originalUrl: String!
   clickCount: Int!
   createdAt: DateTime!
@@ -21,10 +21,9 @@ type Query {
 }
 
 type Mutation {
-  createUrl(input: createSlugInput!): UrlType!
+  createUrl(input: CreateSlugInput!): UrlType!
 }
 
-input createSlugInput {
-  slug: String
-  originalUrl: String!
+input CreateSlugInput {
+  url: String!
 }

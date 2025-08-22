@@ -13,6 +13,6 @@ export class UrlResolver {
 
   @Mutation(() => UrlType)
   async createUrl(@Args({ name: 'input', type: () => CreateSlugInput }) input: CreateSlugInput): Promise<UrlType> {
-    return this.service.create(input.originalUrl, input.slug)
+    return this.service.createWithGeneratedSlug(input.url)
   }
 }

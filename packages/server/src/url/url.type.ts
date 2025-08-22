@@ -1,11 +1,11 @@
-import { Field, InputType, Int, ObjectType, OmitType } from '@nestjs/graphql'
+import { Field, InputType, Int, ObjectType, PickType } from '@nestjs/graphql'
 
 @ObjectType()
 export class UrlType {
   @Field()
   id: string
 
-  @Field()
+  @Field({ nullable: true })
   slug: string
 
   @Field({ nullable: false })
@@ -22,12 +22,10 @@ export class UrlType {
 }
 
 @InputType()
-export class CreateSlugInput extends OmitType(UrlType, ['id', 'clickCount', 'createdAt', 'updatedAt'] as const) {}
+export class CreateSlugInput {
+  @Field()
+  url: string
+}
 
 @InputType()
-export class UpdateSlugInput extends OmitType(UrlType, [
-  'originalUrl',
-  'clickCount',
-  'createdAt',
-  'updatedAt',
-] as const) {}
+export class UpdateSlugInput extends PickType(UrlType, ['id', 'originalUrl'] as const) {}

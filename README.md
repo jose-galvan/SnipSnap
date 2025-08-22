@@ -42,6 +42,7 @@ docker-compose up -d
 ```
 
 This will start a PostgreSQL database on port 5432 with the following credentials:
+
 - Database: `dev`
 - Username: `user`
 - Password: `password`
@@ -53,6 +54,7 @@ npm run dev
 ```
 
 This will start both the client and server in development mode:
+
 - **Client**: http://localhost:5173 (React app with Vite)
 - **Server**: http://localhost:3000 (NestJS API)
 
@@ -102,11 +104,13 @@ npm run format       # Format server code
 ### Code Style
 
 This project uses:
+
 - **ESLint** for code linting
 - **Prettier** for code formatting
 - **TypeScript** for type safety
 
 Code style preferences:
+
 - No semicolons
 - Single quotes
 - 120 character line limit
@@ -146,6 +150,7 @@ The application uses PostgreSQL as its database. The database configuration is m
 ### Database Connection
 
 Default connection details:
+
 - **Host**: localhost
 - **Port**: 5432
 - **Database**: dev
@@ -215,12 +220,14 @@ chopchop/
 Create environment files as needed:
 
 #### Server (.env)
+
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/dev
 PORT=3000
 ```
 
 #### Client (.env)
+
 ```env
 VITE_API_URL=http://localhost:3000
 ```
@@ -261,6 +268,7 @@ This project is licensed under the MIT license.
 ### Getting Help
 
 If you encounter any issues:
+
 1. Check the logs in your terminal
 2. Ensure all prerequisites are installed
 3. Try restarting the development servers

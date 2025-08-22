@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Url } from '../entities/url.entity'
+import { OnEvent } from '@nestjs/event-emitter'
+import { SlugGenerator } from '../utils/slug-generator'
+import { Events } from 'src/app.constants'
 
 @Injectable()
 export class UrlService {
@@ -10,10 +13,7 @@ export class UrlService {
     private readonly urlRepository: Repository<Url>
   ) {}
 
-  private generateSlug = (url: string) => url
-  private generateRandom = () => Date.now().toString()
-
-  async create(originalUrl: string, slug: string): Promise<Url> {
+  private async create(originalUrl: string, slug: string): Promise<Url> {
     const url = this.urlRepository.create({
       originalUrl,
       slug,
@@ -21,57 +21,70 @@ export class UrlService {
     return this.urlRepository.save(url)
   }
 
-  async createWithGeneratedSlug(originalUrl: string): Promise<Url> {
-    let slug: string
+  /**
+   * Saves the original url and generates a custom slug
+   * @param url - the url the slug will redirect to
+   * @returns Url Object containing the slug and url
+   */
+  async createWithGeneratedSlug(url: string): Promise<Url> {
+    let slug = SlugGenerator.generateFromText(url)
     let attempts = 0
     const maxAttempts = 10
 
-    // todo: Generate unique slug with collision handling
-    do {
-      slug = this.generateSlug(originalUrl)
-      const existing = await this.findBySlug(slug)
+    while (attempts < maxAttempts) {
+      const exists = await this.findBySlug(slug)
 
-      if (!existing) {
+      if (!exists) {
         break
       }
+      // include timestamp in case someone else already created
+      // a record with the underlying url
+      slug = SlugGenerator.generateWithTimestamp(url)
 
-      //If collision, try with timestamp
-      slug = this.generateSlug(`${originalUrl}|${Date.now()}`)
       attempts++
-    } while (attempts < maxAttempts)
-
-    if (attempts >= maxAttempts) {
-      // todo: Fallback to random if still colliding
-
-      slug = this.generateRandom()
     }
 
-    return this.create(originalUrl, slug)
+    // One last chance to get a unique slug
+    if (attempts >= maxAttempts) {
+      slug = SlugGenerator.generate()
+    }
+    return this.create(url, slug)
   }
 
+  /**
+   * Gets the url record for the underlying slug
+   * @param slug - the url the slug will redirect to
+   * @returns Url Object containing the slug and url
+   */
   async findBySlug(slug: string): Promise<Url | null> {
     return this.urlRepository.findOne({ where: { slug } })
   }
 
+  /**
+   * Increases the url click count
+   * @param id - id of the url record
+   * @returns an update result { affected: number }
+   */
   async incrementClickCount(id: string): Promise<void> {
     await this.urlRepository.increment({ id }, 'clickCount', 1)
   }
 
+  /**
+   * updates the Url record with a custom slug
+   * @param id - id of the url record
+   * @param newSlug - custom slug for the url record
+   * @returns the updated url record
+   */
   async updateSlug(id: string, newSlug: string): Promise<Url | null> {
     await this.urlRepository.update(id, { slug: newSlug })
     return this.urlRepository.findOne({ where: { id } })
   }
 
-  async regenerateSlug(id: string): Promise<Url | null> {
-    const url = await this.urlRepository.findOne({ where: { id } })
-    if (!url) {
-      return null
-    }
-
-    const newSlug = this.generateSlug(url.originalUrl)
-    return this.updateSlug(id, newSlug)
-  }
-
+  /**
+   * return most cliked urls
+   * @param limit - number of url records to retrieved
+   * @returns List of Url records - Promise<Url[]>
+   */
   async findMostPopular(limit: number = 10): Promise<Url[]> {
     return this.urlRepository.find({
       order: { clickCount: 'DESC' },
@@ -79,6 +92,11 @@ export class UrlService {
     })
   }
 
+  /**
+   * return most cliked urls
+   * @param limit - number of url records to retrieved
+   * @returns List of Url records - Promise<Url[]>
+   */
   async findRecentUrls(limit: number = 10): Promise<Url[]> {
     return this.urlRepository.find({
       order: { createdAt: 'DESC' },
@@ -86,7 +104,17 @@ export class UrlService {
     })
   }
 
+  /**
+   * deletes a url record from the database
+   * @param limit - number of url records to retrieved
+   * @returns Delete result - Promise<{ affected: number }>
+   */
   async remove(id: string): Promise<void> {
     await this.urlRepository.delete(id)
+  }
+
+  @OnEvent(Events.URL_CLICKED)
+  async handleOrderCreatedEvent(url: Url) {
+    await this.incrementClickCount(url.id)
   }
 }

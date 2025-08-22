@@ -7,11 +7,11 @@ export class Url {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   @Index('IDX_url_slug')
   slug: string
 
-  @Column('text')
+  @Column('text', { nullable: false })
   originalUrl: string
 
   @Column({ default: 0 })
