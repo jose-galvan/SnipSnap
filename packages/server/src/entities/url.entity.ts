@@ -23,7 +23,3 @@ export class Url {
   @UpdateDateColumn()
   updatedAt: Date
 }
-
-export type CreateUrlDto = Pick<Url, 'originalUrl'> & {
-  slug: string
-}
