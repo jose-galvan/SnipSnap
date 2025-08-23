@@ -6,6 +6,7 @@ import * as yup from 'yup'
 import { useEffect, useState } from 'react'
 import ShortUrlCard from '../components/ShorUrlCard'
 import validator from 'validator'
+import Header from '../components/Header'
 
 const FormSchema = yup
   .object({
@@ -95,40 +96,43 @@ export default function Home() {
   }
 
   return (
-    <div className='hero bg-base-200 h-[calc(100vh_-_64px)]'>
-      <div className='hero-content text-center -translate-y-16 w-[50vw] h-[50vh]'>
-        <div className='max-w-full w-full flex flex-col items-center'>
-          <h1 className='text-4xl font-bold text-gray-600 mb-4 mx-auto'>Short Your Link! </h1>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className='w-full space-y-6 flex items-center bg-base-200 justify-center flex-col'
-          >
-            <div className='mt-4 min-h-16 h-16 w-full relative'>
-              <div className='join'>
-                <input id='url' {...register('url')} className='input join-item w-80' placeholder='URL...' />
-                <button disabled={!isValid} type='submit' className='btn btn-primary join-item w-16'>
-                  Short
-                </button>
+    <>
+      <Header></Header>
+      <div className='hero bg-base-200 h-[calc(100vh_-_64px)]'>
+        <div className='hero-content text-center -translate-y-16 w-[50vw] h-[50vh]'>
+          <div className='max-w-full w-full flex flex-col items-center'>
+            <h1 className='text-4xl font-bold text-gray-600 mb-4 mx-auto'>Short Your Link! </h1>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className='w-full space-y-6 flex items-center bg-base-200 justify-center flex-col'
+            >
+              <div className='mt-4 min-h-16 h-16 w-full relative'>
+                <div className='join'>
+                  <input id='url' {...register('url')} className='input join-item w-80' placeholder='URL...' />
+                  <button disabled={!isValid} type='submit' className='btn btn-primary join-item w-16'>
+                    Short
+                  </button>
+                </div>
+                {errors.url?.message && (
+                  <p className='text-red-400 absolute -bottom-1 left-1/2 -translate-x-1/2'>{errors.url?.message}</p>
+                )}
               </div>
-              {errors.url?.message && (
-                <p className='text-red-400 absolute -bottom-1 left-1/2 -translate-x-1/2'>{errors.url?.message}</p>
+            </form>
+            <div className='w-full relative'>
+              {shortUrl && (
+                <ShortUrlCard
+                  shortUrl={shortUrl}
+                  onClose={onCloseCard}
+                  onUpdate={updated => {
+                    console.log('updated', updated)
+                    setShortUrl(updated)
+                  }}
+                ></ShortUrlCard>
               )}
             </div>
-          </form>
-          <div className='w-full relative'>
-            {shortUrl && (
-              <ShortUrlCard
-                shortUrl={shortUrl}
-                onClose={onCloseCard}
-                onUpdate={updated => {
-                  console.log('updated', updated)
-                  setShortUrl(updated)
-                }}
-              ></ShortUrlCard>
-            )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

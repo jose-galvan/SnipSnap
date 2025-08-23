@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import { SnackbarProvider } from 'notistack'
 
 import Home from './pages/Home'
-import Header from './components/Header'
+import NotFound from './pages/NotFound'
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: import.meta.env.VITE_SERVER_URL }),
@@ -17,9 +17,10 @@ function App() {
     <ApolloProvider client={client}>
       <SnackbarProvider>
         <BrowserRouter>
-          <Header></Header>
           <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='/not-found' element={<NotFound />} />
+            <Route path='*' element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </SnackbarProvider>
