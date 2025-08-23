@@ -5,10 +5,21 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useEffect, useState } from 'react'
 import ShortUrlCard from '../components/ShorUrlCard'
+import validator from 'validator'
 
 const FormSchema = yup
   .object({
-    url: yup.string().url('Please enter a valid URL').required('Enter a url'),
+    url: yup
+      .string()
+      .test('is-url', 'Please enter a valid URL', value => {
+        if (!value) return false
+        return validator.isURL(value, {
+          require_protocol: true,
+          require_valid_protocol: true,
+          protocols: ['http', 'https'],
+        })
+      })
+      .required('Enter a url'),
   })
   .required()
 

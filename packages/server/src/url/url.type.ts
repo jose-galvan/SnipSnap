@@ -12,7 +12,9 @@ export class UrlType {
   @Field({ nullable: false })
   @IsUrl(
     {
-      //Note: we can add validation options such as protocol, etc...
+      require_protocol: true,
+      require_valid_protocol: true,
+      protocols: ['http', 'https'],
     },
     { message: 'Please provide a valid URL' }
   )
