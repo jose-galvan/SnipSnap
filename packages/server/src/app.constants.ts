@@ -10,6 +10,10 @@ export namespace Env {
   export const DB_NAME = 'DB_NAME' 
   
   export const DEFAULT_REDIRECT = 'DEFAULT_REDIRECT' 
+
+  export const SHORT_THROTTLE = 'SHORT_THROTTLE'
+  export const MEDIUM_THROTTLE = 'MEDIUM_THROTTLE'
+  export const LONG_THROTTLE = 'LONG_THROTTLE' 
 }
 
 export namespace Events {

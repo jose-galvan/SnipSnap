@@ -24,7 +24,6 @@ export type CreateSlugInput = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
   createUrl: UrlType;
 };
 
@@ -34,12 +33,10 @@ export type MutationCreateUrlArgs = {
 };
 
 export type Query = {
-  __typename?: 'Query';
   mostRecent: Array<UrlType>;
 };
 
 export type UrlType = {
-  __typename?: 'UrlType';
   clickCount: Scalars['Int']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
@@ -48,19 +45,19 @@ export type UrlType = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type UrlFieldsFragment = { __typename?: 'UrlType', id: string, slug?: string | null, clickCount: number, originalUrl: string };
+export type UrlFieldsFragment = { id: string, slug?: string | null, clickCount: number, originalUrl: string };
 
 export type CreateSlugMutationVariables = Exact<{
   input: CreateSlugInput;
 }>;
 
 
-export type CreateSlugMutation = { __typename?: 'Mutation', createUrl: { __typename?: 'UrlType', id: string, slug?: string | null, clickCount: number, originalUrl: string } };
+export type CreateSlugMutation = { createUrl: { id: string, slug?: string | null, clickCount: number, originalUrl: string } };
 
 export type MostRecentQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MostRecentQuery = { __typename?: 'Query', mostRecent: Array<{ __typename?: 'UrlType', id: string, slug?: string | null, clickCount: number, originalUrl: string }> };
+export type MostRecentQuery = { mostRecent: Array<{ id: string, slug?: string | null, clickCount: number, originalUrl: string }> };
 
 export const UrlFieldsFragmentDoc = gql`
     fragment UrlFields on UrlType {
