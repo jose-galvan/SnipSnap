@@ -1,60 +1,75 @@
+import { useCreateSlugMutation, type CreateSlugInput, type UrlType } from '../../graphql/generated/server.sdk'
+import { useForm, type SubmitHandler } from 'react-hook-form'
+
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 import { useState } from 'react'
-import { useCreateSlugMutation, type UrlType } from '../../graphql/generated/server.sdk'
+
+const FormSchema = yup
+  .object({
+    url: yup.string().url('Please enter a valid URL').required('Enter a url'),
+    slug: yup.string().optional(),
+  })
+  .required()
 
 export default function Home() {
-  const [url, setUrl] = useState<string>('')
-  const [, setCreated] = useState<Partial<UrlType> | null>(null)
+  const [_urlRecord, setUrl] = useState<Partial<UrlType> | null>(null)
   const [createSlug] = useCreateSlugMutation()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!url) return
+  const form = useForm({
+    resolver: yupResolver(FormSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  })
+  const {
+    setValue,
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = form
+
+  const onSubmit: SubmitHandler<CreateSlugInput> = async (data: CreateSlugInput) => {
+    if (!isValid) return
     const result = await createSlug({
       variables: {
         input: {
-          url,
+          url: data.url,
         },
       },
     })
+    if (result.error) {
+      console.log('Error', result.error)
+    }
     if (result.data?.createUrl) {
-      setCreated(result.data?.createUrl)
+      setUrl(result.data?.createUrl)
+      setValue('slug', `${import.meta.env.VITE_BASE_URL}/${result.data?.createUrl.slug}`)
     }
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      {/* Header */}
-      <div className='bg-gray-400 h-16 w-full'></div>
-
-      {/* Main Content */}
-      <div className='max-w-2xl mx-auto px-6 py-12'>
-        <h1 className='text-4xl font-bold text-gray-800 mb-12'>Chop Chop You URL! 🔗</h1>
-
-        <p className='text-xl text-gray-600 mb-8'>Enter the URL to shorten</p>
-
-        <form onSubmit={handleSubmit} className='space-y-6'>
-          <div>
-            <label htmlFor='url' className='block text-lg font-medium text-gray-700 mb-2'>
-              URL
-            </label>
-            <input
-              type='url'
-              id='url'
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              className='w-full px-4 py-3 border border-gray-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-              placeholder='https://example.com'
-              required
-            />
-          </div>
-
-          <button
-            type='submit'
-            className='bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-md text-lg transition-colors duration-200'
-          >
-            Shorten
-          </button>
-        </form>
+    <div className='hero bg-base-200 min-h-screen'>
+      <div className='hero-content text-center -translate-y-16'>
+        <div className='max-w-md'>
+          <h1 className='text-4xl font-bold text-gray-400 mb-4 mx-auto'>Chop Chop Your Link!</h1>
+          <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 flex items-center bg-base-200 justify-center'>
+            <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs  p-4'>
+              <div className='join'>
+                <input {...register('url')} className='input join-item' placeholder='URL...' />
+                <button disabled={!isValid} type='submit' className='btn btn-primary join-item'>
+                  Chop
+                </button>
+              </div>
+              {errors.url?.message && <p className='text-red-400'>{errors.url?.message}</p>}
+              <input
+                {...register('slug')}
+                hidden={!_urlRecord?.slug}
+                type='text'
+                placeholder='Type here'
+                className='input input-ghost mt-12'
+              />
+            </fieldset>
+          </form>
+        </div>
       </div>
     </div>
   )
