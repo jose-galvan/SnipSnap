@@ -23,7 +23,7 @@
 
 ## Description
 
-ChopChop API - Backend service for the ChopChop URL shortener, built with [NestJS](https://github.com/nestjs/nest) framework.
+SnipSnap API - Backend service for the SnipSnap URL shortener, built with [NestJS](https://github.com/nestjs/nest) framework.
 
 ## Project setup
 

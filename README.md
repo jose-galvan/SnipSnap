@@ -1,4 +1,4 @@
-# ChopChop
+# SnipSnap
 
 A modern URL shortener application built with React and NestJS, featuring a clean interface and robust API.
 
@@ -23,8 +23,8 @@ Before running this application, make sure you have the following installed:
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd chopchop
+git clone https://github.com/jose-galvan/SnipSnap.git
+cd snipsnap
 ```
 
 ### 2. Install dependencies
@@ -196,7 +196,7 @@ npm run test:e2e
 ## 📁 Project Structure
 
 ```
-chopchop/
+snipsnap/
 ├── packages/
 │   ├── client/                 # React frontend
 │   │   ├── src/
@@ -255,21 +255,3 @@ npm run start:prod
 ## 📝 License
 
 This project is licensed under the MIT license.
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-1. **Port already in use**: Make sure ports 3000, 5173, and 5432 are available
-2. **Database connection issues**: Ensure Docker is running and the database container is started
-3. **Module not found**: Run `npm install` in the root directory
-4. **TypeScript errors**: Check that all dependencies are installed and TypeScript is properly configured
-
-### Getting Help
-
-If you encounter any issues:
-
-1. Check the logs in your terminal
-2. Ensure all prerequisites are installed
-3. Try restarting the development servers
-4. Check that the database is running with `docker-compose ps`

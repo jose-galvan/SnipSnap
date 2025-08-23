@@ -55,7 +55,7 @@ describe('AppController', () => {
         const mockUrl = {
           id: '1',
           slug: 'mySlug',
-          originalUrl: 'https://chopchop.io',
+          originalUrl: 'https://snipsnap.io',
           clickCount: 0,
         }
         const mockResponse = {
@@ -69,7 +69,7 @@ describe('AppController', () => {
         await appController.redirect('mySlug', mockResponse as any)
 
         expect(mockUrlService.findBySlug).toHaveBeenCalledWith('mySlug')
-        expect(mockResponse.redirect).toHaveBeenCalledWith('https://chopchop.io')
+        expect(mockResponse.redirect).toHaveBeenCalledWith('https://snipsnap.io')
       })
     })
   })

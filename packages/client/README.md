@@ -1,6 +1,6 @@
-# ChopChop Client
+# SnipSnap Client
 
-React frontend for ChopChop URL shortener, built with TypeScript and Vite.
+React frontend for SnipSnap URL shortener, built with TypeScript and Vite.
 
 Currently, two official plugins are available:
 

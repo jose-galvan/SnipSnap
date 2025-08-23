@@ -1,5 +1,5 @@
 {
-  "name": "chopchop",
+  "name": "snipsnap",
   "private": true,
   "workspaces": [
     "packages/*"

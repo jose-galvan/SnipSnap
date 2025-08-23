@@ -20,7 +20,7 @@ describe('SlugGenerator', () => {
 
   describe('generateFromText', () => {
     it('should generate the same slug twice', () => {
-      const url = 'https://chopchop.io/mySlug'
+      const url = 'https://snipsnap.io/mySlug'
       const slug1 = SlugGenerator.generateFromText(url)
       const slug2 = SlugGenerator.generateFromText(url)
 
@@ -29,8 +29,8 @@ describe('SlugGenerator', () => {
     })
 
     it('should generate different slugs for the same url', () => {
-      const url1 = 'https://chopchop.io/mySlug'
-      const url2 = 'https://chopchop.io/mySlug2'
+      const url1 = 'https://snipsnap.io/mySlug'
+      const url2 = 'https://snipsnap.io/mySlug2'
 
       const slug1 = SlugGenerator.generateFromText(url1)
       const slug2 = SlugGenerator.generateFromText(url2)
@@ -39,7 +39,7 @@ describe('SlugGenerator', () => {
     })
 
     it('should respect custom length', () => {
-      const url = 'https://chopchop.io/mySlug'
+      const url = 'https://snipsnap.io/mySlug'
       const slug = SlugGenerator.generateFromText(url, 10)
       expect(slug).toHaveLength(10)
     })
@@ -47,7 +47,7 @@ describe('SlugGenerator', () => {
 
   describe('generateWithTimestamp', () => {
     it('should generate different slugs for same URL at different times', async () => {
-      const url = 'https://chopchop.io/mySlug'
+      const url = 'https://snipsnap.io/mySlug'
       const slug1 = SlugGenerator.generateWithTimestamp(url)
 
       // delay generation for a different result

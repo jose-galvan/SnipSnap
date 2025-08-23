@@ -50,23 +50,25 @@ export default function Home() {
     <div className='hero bg-base-200 min-h-screen'>
       <div className='hero-content text-center -translate-y-16'>
         <div className='max-w-md'>
-          <h1 className='text-4xl font-bold text-gray-400 mb-4 mx-auto'>Chop Chop Your Link!</h1>
+          <h1 className='text-4xl font-bold text-gray-400 mb-4 mx-auto'>Short Your Link!</h1>
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-6 flex items-center bg-base-200 justify-center'>
             <fieldset className='fieldset bg-base-200 border-base-300 rounded-box w-xs  p-4'>
               <div className='join'>
                 <input {...register('url')} className='input join-item' placeholder='URL...' />
                 <button disabled={!isValid} type='submit' className='btn btn-primary join-item'>
-                  Chop
+                  Short
                 </button>
               </div>
               {errors.url?.message && <p className='text-red-400'>{errors.url?.message}</p>}
-              <input
-                {...register('slug')}
-                hidden={!_urlRecord?.slug}
-                type='text'
-                placeholder='Type here'
-                className='input input-ghost mt-12'
-              />
+              <div className='mt-8 min-h-10'>
+                <input
+                  {...register('slug')}
+                  hidden={!_urlRecord?.slug}
+                  type='text'
+                  placeholder='Type here'
+                  className='input input-ghost'
+                />
+              </div>
             </fieldset>
           </form>
         </div>

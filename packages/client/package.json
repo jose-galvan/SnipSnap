@@ -1,14 +1,14 @@
 {
-  "name": "chopchop-client",
+  "name": "snipsnap-client",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "dev-docker": "docker run -p 80:80 --detach --name chopchop-client chopchop/client:0.1",
+    "dev-docker": "docker run -p 80:80 --detach --name snipsnap-client snipsnap/client:0.1",
     "build": "tsc -b && vite build",
-    "build-docker": "docker build ./ --tag chopchop/client:0.1",
+    "build-docker": "docker build ./ --tag snipsnap/client:0.1",
     "lint": "cd ../.. && npm run lint -- packages/client",
     "lint:fix": "cd ../.. && npm run lint:fix -- packages/client",
     "format": "cd ../.. && npm run format -- packages/client",
