@@ -25,6 +25,7 @@ export type CreateSlugInput = {
 
 export type Mutation = {
   createUrl: UrlType;
+  updateSlug?: Maybe<UrlType>;
 };
 
 
@@ -32,8 +33,18 @@ export type MutationCreateUrlArgs = {
   input: CreateSlugInput;
 };
 
+
+export type MutationUpdateSlugArgs = {
+  input: UpdateSlugInput;
+};
+
 export type Query = {
   mostRecent: Array<UrlType>;
+};
+
+export type UpdateSlugInput = {
+  id: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
 };
 
 export type UrlType = {
@@ -58,6 +69,13 @@ export type MostRecentQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MostRecentQuery = { mostRecent: Array<{ id: string, slug?: string | null, clickCount: number, originalUrl: string }> };
+
+export type UpdateSlugMutationVariables = Exact<{
+  input: UpdateSlugInput;
+}>;
+
+
+export type UpdateSlugMutation = { updateSlug?: { id: string, slug?: string | null, clickCount: number, originalUrl: string } | null };
 
 export const UrlFieldsFragmentDoc = gql`
     fragment UrlFields on UrlType {
@@ -137,3 +155,34 @@ export type MostRecentQueryHookResult = ReturnType<typeof useMostRecentQuery>;
 export type MostRecentLazyQueryHookResult = ReturnType<typeof useMostRecentLazyQuery>;
 export type MostRecentSuspenseQueryHookResult = ReturnType<typeof useMostRecentSuspenseQuery>;
 export type MostRecentQueryResult = ApolloReactCommon.QueryResult<MostRecentQuery, MostRecentQueryVariables>;
+export const UpdateSlugDocument = gql`
+    mutation updateSlug($input: UpdateSlugInput!) {
+  updateSlug(input: $input) {
+    ...UrlFields
+  }
+}
+    ${UrlFieldsFragmentDoc}`;
+
+/**
+ * __useUpdateSlugMutation__
+ *
+ * To run a mutation, you first call `useUpdateSlugMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSlugMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSlugMutation, { data, loading, error }] = useUpdateSlugMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSlugMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateSlugMutation, UpdateSlugMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<UpdateSlugMutation, UpdateSlugMutationVariables>(UpdateSlugDocument, options);
+      }
+export type UpdateSlugMutationHookResult = ReturnType<typeof useUpdateSlugMutation>;
+export type UpdateSlugMutationResult = ApolloReactCommon.MutationResult<UpdateSlugMutation>;

@@ -36,6 +36,13 @@ export class CreateSlugInput {
   @IsNotEmpty({ message: 'URL cannot be empty' })
   url: string
 }
-
 @InputType()
-export class UpdateSlugInput extends PickType(UrlType, ['id', 'originalUrl'] as const) {}
+export class UpdateSlugInput {
+  @IsNotEmpty({ message: 'Id cannot be empty' })
+  @Field(() => String, { nullable: false })
+  id: string
+
+  @IsNotEmpty({ message: 'Slug cannot be empty' })
+  @Field(() => String, { nullable: false })
+  slug: string
+}

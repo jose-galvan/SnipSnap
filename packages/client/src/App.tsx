@@ -2,6 +2,8 @@ import './App.css'
 import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
 import { BrowserRouter, Routes, Route } from 'react-router'
+import { SnackbarProvider } from 'notistack'
+
 import Home from './pages/Home'
 import Header from './components/Header'
 
@@ -13,12 +15,14 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <BrowserRouter>
-        <Header></Header>
-        <Routes>
-          <Route path='/' element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      <SnackbarProvider>
+        <BrowserRouter>
+          <Header></Header>
+          <Routes>
+            <Route path='/' element={<Home />} />
+          </Routes>
+        </BrowserRouter>
+      </SnackbarProvider>
     </ApolloProvider>
   )
 }

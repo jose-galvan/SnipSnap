@@ -17,3 +17,9 @@ query mostRecent {
     ...UrlFields
   }
 }
+
+mutation updateSlug($input: UpdateSlugInput!) {
+  updateSlug(input: $input) {
+    ...UrlFields
+  }
+}

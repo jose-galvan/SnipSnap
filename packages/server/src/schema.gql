@@ -22,8 +22,14 @@ type Query {
 
 type Mutation {
   createUrl(input: CreateSlugInput!): UrlType!
+  updateSlug(input: UpdateSlugInput!): UrlType!
 }
 
 input CreateSlugInput {
   url: String!
+}
+
+input UpdateSlugInput {
+  id: String!
+  slug: String!
 }
