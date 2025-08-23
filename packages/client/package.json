@@ -12,13 +12,25 @@
     "lint": "cd ../.. && npm run lint -- packages/client",
     "lint:fix": "cd ../.. && npm run lint:fix -- packages/client",
     "format": "cd ../.. && npm run format -- packages/client",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate": "graphql-codegen --config ./graphql/config/server.yml"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.0",
+    "graphql": "^16.11.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router": "^7.8.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/introspection": "^4.0.3",
+    "@graphql-codegen/named-operations-object": "^3.1.1",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.3",
+    "@parcel/watcher": "^2.5.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.1",

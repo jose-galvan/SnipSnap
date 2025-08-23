@@ -1,0 +1,19 @@
+fragment UrlFields on UrlType {
+    id,
+    slug, 
+    clickCount, 
+    originalUrl
+}
+
+
+mutation createSlug ($input:  CreateSlugInput!){
+  createUrl(input: $input) {
+    ...UrlFields
+  }
+}
+
+query mostRecent {
+  mostRecent {
+    ...UrlFields
+  }
+}

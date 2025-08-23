@@ -1,0 +1,16 @@
+overwrite: true
+schema: 'http://localhost:3000/api/graphql'
+generates:
+  graphql/generated/server.sdk.ts:
+    documents:
+      - 'src/graphql/*.server.graphql'
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo:
+          withHooks: true
+          withComponent: false
+          withMutationFn: false
+          withMutationOptionsType: false
+          apolloReactCommonImportFrom: '@apollo/client/react'
+          apolloReactHooksImportFrom: '@apollo/client/react'
