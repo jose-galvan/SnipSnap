@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm'
+import { User } from './user.entity'
 
 @Entity('urls')
 @Index('IDX_url_slug_clickCount', ['slug', 'clickCount'])
@@ -16,6 +26,13 @@ export class Url {
 
   @Column({ default: 0 })
   clickCount: number
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User | null
+
+  @Column({ type: 'uuid', nullable: true })
+  createdById: string | null
 
   @CreateDateColumn()
   createdAt: Date

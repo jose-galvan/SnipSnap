@@ -8,7 +8,7 @@ import { AuthState } from './state/auth.state'
 
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
-import SignIn from './pages/Login'
+import SignIn from './pages/SignIn'
 
 const authLink = new SetContextLink(prevContext => {
   const token = AuthState.access_token.get()

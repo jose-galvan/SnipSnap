@@ -11,8 +11,8 @@ export class UrlResolver {
   constructor(private readonly service: UrlService) {}
 
   @Query(() => [UrlType])
-  async mostRecent(): Promise<UrlType[]> {
-    return this.service.findRecentUrls(10)
+  async mostRecent(@CurrentUserId() userId: string): Promise<UrlType[]> {
+    return this.service.findRecentUrls(10, userId)
   }
 
   @Public()
@@ -21,16 +21,22 @@ export class UrlResolver {
     @CurrentUserId() userId: string,
     @Args({ name: 'input', type: () => CreateSlugInput }) input: CreateSlugInput
   ): Promise<UrlType> {
-    console.log('user', userId)
-    return this.service.createWithGeneratedSlug(input.url)
+    return this.service.createWithGeneratedSlug(input.url, userId)
   }
 
   @Public()
   @Mutation(() => UrlType)
   async updateSlug(
-    @CurrentUserId() userId: string,
     @Args({ name: 'input', type: () => UpdateSlugInput }) input: UpdateSlugInput
   ): Promise<UrlType | null> {
     return this.service.updateSlug(input.id, input.slug)
+  }
+
+  @Mutation(() => UrlType)
+  async setUrlOwner(
+    @CurrentUserId() userId: string,
+    @Args({ name: 'id', type: () => String }) id: string
+  ): Promise<UrlType | null> {
+    return this.service.updateUrlOwner(id, userId)
   }
 }

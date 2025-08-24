@@ -3,6 +3,7 @@ fragment UrlFields on UrlType {
   slug
   clickCount
   originalUrl
+  createdById
 }
 
 mutation createSlug($input: CreateSlugInput!) {
@@ -19,6 +20,12 @@ query mostRecent {
 
 mutation updateSlug($input: UpdateSlugInput!) {
   updateSlug(input: $input) {
+    ...UrlFields
+  }
+}
+
+mutation setUrlOwner($id: String!) {
+  setUrlOwner(id: $id) {
     ...UrlFields
   }
 }

@@ -7,6 +7,7 @@ type UrlType {
   slug: String
   originalUrl: String!
   clickCount: Int!
+  createdById: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -27,6 +28,7 @@ type Query {
 type Mutation {
   createUrl(input: CreateSlugInput!): UrlType!
   updateSlug(input: UpdateSlugInput!): UrlType!
+  setUrlOwner(id: String!): UrlType!
   signIn(input: SignInInput!): AuthResponse!
   signUp(input: SignUpInput!): AuthResponse!
 }

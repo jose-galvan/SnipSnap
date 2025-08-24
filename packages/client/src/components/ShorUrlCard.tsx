@@ -1,13 +1,14 @@
 import { useForm, type SubmitHandler } from 'react-hook-form'
-import { useUpdateSlugMutation, type UrlType } from '../../graphql/generated/server.sdk'
+import { useUpdateSlugMutation } from '../../graphql/generated/server.sdk'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useSnackbar } from 'notistack'
+import { UrlState } from '../state/url.state'
+import { useHookstate } from '@hookstate/core'
+import { useEffect } from 'react'
 
 interface ShortUrlCardProps {
-  shortUrl: Partial<UrlType>
   onClose: () => void
-  onUpdate: (shortUrl: Partial<UrlType>) => void
 }
 
 const FormSchema = yup
@@ -16,13 +17,21 @@ const FormSchema = yup
   })
   .required()
 
-const ShortUrlCard = ({ shortUrl, onClose, onUpdate }: ShortUrlCardProps) => {
+const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
   const { enqueueSnackbar } = useSnackbar()
   const [updateSlug] = useUpdateSlugMutation()
   const handleClose = () => {
     reset()
     onClose()
   }
+
+  const shortUrl = useHookstate(UrlState).lastUrlGenerated
+
+  useEffect(() => {
+    if (shortUrl.value?.slug) {
+      reset({ slug: shortUrl.value.slug! })
+    }
+  }, [shortUrl.value?.slug])
 
   const {
     reset,
@@ -34,7 +43,7 @@ const ShortUrlCard = ({ shortUrl, onClose, onUpdate }: ShortUrlCardProps) => {
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      slug: shortUrl.slug!,
+      slug: shortUrl.value?.slug!,
     },
   })
 
@@ -43,13 +52,13 @@ const ShortUrlCard = ({ shortUrl, onClose, onUpdate }: ShortUrlCardProps) => {
     const res = await updateSlug({
       variables: {
         input: {
-          id: shortUrl.id!,
+          id: shortUrl.value?.id!,
           slug: data.slug,
         },
       },
     })
     if (res.data?.updateSlug) {
-      onUpdate(res.data?.updateSlug)
+      UrlState.lastUrlGenerated.set(res.data?.updateSlug)
       reset({ slug: res.data?.updateSlug.slug! })
       enqueueSnackbar('Short URL Updated!', {
         autoHideDuration: 800,
@@ -64,7 +73,7 @@ const ShortUrlCard = ({ shortUrl, onClose, onUpdate }: ShortUrlCardProps) => {
   }
 
   const onCopySlug = async () => {
-    await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${shortUrl.slug!}`)
+    await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${shortUrl.value?.slug!}`)
     enqueueSnackbar('Copied!', {
       autoHideDuration: 800,
       preventDuplicate: true,

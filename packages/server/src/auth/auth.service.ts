@@ -25,8 +25,12 @@ export class AuthService {
     return result
   }
 
-  async logIn(user: SignInInput | SignUpInput): Promise<AuthResponse> {
-    const payload = { username: user.username, sub: user.username }
+  async logIn(input: SignInInput | SignUpInput): Promise<AuthResponse> {
+    const user = await this.validate(input)
+    if (!user) {
+      throw new UnauthorizedException()
+    }
+    const payload = { username: user.username, sub: user.id }
     return {
       access_token: this.jwtService.sign(payload),
     }

@@ -24,6 +24,9 @@ export class UrlType {
   @Field(() => Int)
   clickCount: number
 
+  @Field(() => String, { nullable: true })
+  createdById?: string | null
+
   @Field()
   createdAt: Date
 

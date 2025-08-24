@@ -1,13 +1,15 @@
-import { useLocation, useNavigate } from 'react-router'
+import { NavLink, useLocation, useNavigate } from 'react-router'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useForm, type SubmitHandler } from 'react-hook-form'
-import { useSignInMutation, useSignUpMutation } from '../../graphql/generated/server.sdk'
+import { useSignInMutation, useSignUpMutation, useSetUrlOwnerMutation } from '../../graphql/generated/server.sdk'
 import { AuthState, type AuthUser } from '../state/auth.state'
 import { decodeToken } from '../utils/token'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect } from 'react'
 import { useUser } from '../hooks/useUser'
+import { none, useHookstate } from '@hookstate/core'
+import { UrlState } from '../state/url.state'
 
 const FormSchema = yup
   .object({
@@ -30,9 +32,10 @@ const SignIn = () => {
   const location = useLocation()
   const [signIn] = useSignInMutation()
   const [signUp] = useSignUpMutation()
+  const [setOwner] = useSetUrlOwnerMutation()
   const isSignUp = location.pathname.includes('signup')
   const navigate = useNavigate()
-
+  const shortUrl = useHookstate(UrlState).lastUrlGenerated
   const { isAuthenticated } = useUser()
 
   useEffect(() => {
@@ -69,6 +72,16 @@ const SignIn = () => {
       })
       if (response.data?.[`${responseKey}`]) {
         setUser(response.data?.[`${responseKey}`].access_token)
+
+        // this updates the url's owner so after user signin/signup
+        if (shortUrl.value?.id && !shortUrl.value.createdById) {
+          await setOwner({
+            variables: {
+              id: shortUrl.value.id,
+            },
+          })
+        }
+        UrlState.lastUrlGenerated.set(none)
         navigate('/')
       }
     } catch (error) {
@@ -88,9 +101,9 @@ const SignIn = () => {
     if (!isValid) return
 
     if (isSignUp) {
-      await handleMutation(data, signUp)
+      return handleMutation(data, signUp)
     } else {
-      await handleMutation(data, signIn)
+      return handleMutation(data, signIn)
     }
   }
 
@@ -126,19 +139,25 @@ const SignIn = () => {
           </form>
           <p className={isSignUp ? 'text-sm text-center mt-4' : 'hidden'}>
             Already have an account?{' '}
-            <a href='/signin' className='link link-primary'>
+            <NavLink to='/signin' className='link link-primary font-semibold'>
               Sign In
-            </a>
+            </NavLink>
           </p>
           <p className={!isSignUp ? 'text-sm text-center mt-4' : 'hidden'}>
             Don't have an account?{' '}
-            <a href='/signup' className='link link-primary'>
-              Sign up
-            </a>
+            <NavLink to='/signup' className='link link-primary font-semibold'>
+              Sign Up
+            </NavLink>
           </p>
           <p className='text-sm text-center'>
-            <a href='/' className='link link-primary'>
-              Home
+            <a
+              onClick={() => {
+                UrlState.lastUrlGenerated.set(none)
+                navigate('/')
+              }}
+              className='link link-primary font-semibold'
+            >
+              Continue as guest
             </a>
           </p>
         </div>

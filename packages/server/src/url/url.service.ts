@@ -13,10 +13,9 @@ export class UrlService {
     private readonly urlRepository: Repository<Url>
   ) {}
 
-  private async create(originalUrl: string, slug: string): Promise<Url> {
+  private async create(dto: Partial<Url>): Promise<Url> {
     const url = this.urlRepository.create({
-      originalUrl,
-      slug,
+      ...dto,
     })
     return this.urlRepository.save(url)
   }
@@ -26,7 +25,7 @@ export class UrlService {
    * @param url - the url the slug will redirect to
    * @returns Url Object containing the slug and url
    */
-  async createWithGeneratedSlug(url: string): Promise<Url> {
+  async createWithGeneratedSlug(url: string, userId?: string): Promise<Url> {
     let slug = SlugGenerator.generateFromText(url)
     let attempts = 0
     const maxAttempts = 10
@@ -48,7 +47,12 @@ export class UrlService {
     if (attempts >= maxAttempts) {
       slug = SlugGenerator.generate()
     }
-    return this.create(url, slug)
+
+    return this.create({
+      originalUrl: url,
+      slug,
+      createdById: userId,
+    })
   }
 
   /**
@@ -81,14 +85,35 @@ export class UrlService {
   }
 
   /**
+   * updates the Url record with a user id
+   * @param id - id of the url record
+   * @param createdById -user Id
+   * @returns the updated url record
+   */
+  async updateUrlOwner(id: string, createdById: string): Promise<Url | null> {
+    const url = await this.urlRepository.findOne({ where: { id } })
+    if (url?.createdById) {
+      throw new Error('Cannot change owner!')
+    }
+    await this.urlRepository.update(id, { createdById })
+    return this.urlRepository.findOne({ where: { id } })
+  }
+
+  /**
    * return most cliked urls
+   * @param userId - User who created the short url
    * @param limit - number of url records to retrieved
+   * @param skip - number of url records to skip
    * @returns List of Url records - Promise<Url[]>
    */
-  async findMostPopular(limit: number = 10): Promise<Url[]> {
+  async findMostPopular(userId: string, limit: number = 10, skip: number = 0): Promise<Url[]> {
     return this.urlRepository.find({
       order: { clickCount: 'DESC' },
       take: limit,
+      skip: skip,
+      where: {
+        createdById: userId,
+      },
     })
   }
 
@@ -97,10 +122,13 @@ export class UrlService {
    * @param limit - number of url records to retrieved
    * @returns List of Url records - Promise<Url[]>
    */
-  async findRecentUrls(limit: number = 10): Promise<Url[]> {
+  async findRecentUrls(limit: number = 10, userId: string): Promise<Url[]> {
     return this.urlRepository.find({
       order: { createdAt: 'DESC' },
       take: limit,
+      where: {
+        createdById: userId,
+      },
     })
   }
 

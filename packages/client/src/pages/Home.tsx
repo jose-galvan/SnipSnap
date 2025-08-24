@@ -1,13 +1,16 @@
-import { useCreateSlugMutation, type CreateSlugInput, type UrlType } from '../../graphql/generated/server.sdk'
+import { useCreateSlugMutation, type CreateSlugInput } from '../../graphql/generated/server.sdk'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useSnackbar } from 'notistack'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import ShortUrlCard from '../components/ShorUrlCard'
 import validator from 'validator'
 import Header from '../components/Header'
 import { useUser } from '../hooks/useUser'
+import { none, useHookstate } from '@hookstate/core'
+import { UrlState } from '../state/url.state'
+import { NavLink } from 'react-router'
 
 const FormSchema = yup
   .object({
@@ -26,10 +29,9 @@ const FormSchema = yup
   .required()
 
 export default function Home() {
-  const [shortUrl, setShortUrl] = useState<Partial<UrlType> | null>(null)
   const [createSlug] = useCreateSlugMutation()
   const { enqueueSnackbar } = useSnackbar()
-
+  const urlState = useHookstate(UrlState)
   const { isAuthenticated } = useUser()
 
   const {
@@ -55,7 +57,7 @@ export default function Home() {
         },
       })
       if (result.data?.createUrl) {
-        setShortUrl(result.data?.createUrl)
+        urlState.lastUrlGenerated.set(result.data?.createUrl)
         enqueueSnackbar('Your Short Link is Ready!', {
           autoHideDuration: 1200,
           preventDuplicate: true,
@@ -95,8 +97,8 @@ export default function Home() {
   }, [])
 
   const onCloseCard = () => {
+    urlState.lastUrlGenerated.set(none)
     reset()
-    setShortUrl(null)
   }
 
   return (
@@ -123,17 +125,15 @@ export default function Home() {
               </div>
             </form>
             <div className='w-full relative'>
-              {shortUrl && (
-                <ShortUrlCard shortUrl={shortUrl} onClose={onCloseCard} onUpdate={setShortUrl}></ShortUrlCard>
-              )}
+              {urlState.lastUrlGenerated.value && <ShortUrlCard onClose={onCloseCard}></ShortUrlCard>}
             </div>
           </div>
         </div>
         {!isAuthenticated && (
           <p className='text-sm text-center mb-6 mt-auto'>
-            <a href='/signin' className='link link-primary font-semibold'>
+            <NavLink to='/signin' className='link link-primary font-semibold'>
               Sign In
-            </a>{' '}
+            </NavLink>{' '}
             to save your short links.
           </p>
         )}
