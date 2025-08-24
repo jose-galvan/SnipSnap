@@ -73,7 +73,7 @@ const SignIn = () => {
       if (response.data?.[`${responseKey}`]) {
         setUser(response.data?.[`${responseKey}`].access_token)
 
-        // this updates the url's owner so after user signin/signup
+        // this updates the url's owner of the last url crearted after user signin/signup
         if (shortUrl.value?.id && !shortUrl.value.createdById) {
           await setOwner({
             variables: {
