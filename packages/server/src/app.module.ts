@@ -10,6 +10,8 @@ import { join } from 'path'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { Env } from './app.constants'
+import { UsersModule } from './users/users.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { Env } from './app.constants'
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       path: '/api/graphql',
+      context: ({ req, res }) => ({ req, res }),
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -55,6 +58,8 @@ import { Env } from './app.constants'
     }),
     // ***** My modules ******
     UrlModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],

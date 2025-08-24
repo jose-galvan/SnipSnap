@@ -16,6 +16,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type AuthResponse {
+  access_token: String!
+}
+
 type Query {
   mostRecent: [UrlType!]!
 }
@@ -23,6 +27,8 @@ type Query {
 type Mutation {
   createUrl(input: CreateSlugInput!): UrlType!
   updateSlug(input: UpdateSlugInput!): UrlType!
+  signIn(input: SignInInput!): AuthResponse!
+  signUp(input: SignUpInput!): AuthResponse!
 }
 
 input CreateSlugInput {
@@ -32,4 +38,14 @@ input CreateSlugInput {
 input UpdateSlugInput {
   id: String!
   slug: String!
+}
+
+input SignInInput {
+  username: String!
+  password: String!
+}
+
+input SignUpInput {
+  username: String!
+  password: String!
 }

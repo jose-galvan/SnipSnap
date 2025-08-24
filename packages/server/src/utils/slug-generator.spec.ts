@@ -1,7 +1,6 @@
 import { SlugGenerator } from './slug-generator'
 
 describe('SlugGenerator', () => {
-
   describe('generate', () => {
     it('should generate random slugs with the default length', () => {
       const slug1 = SlugGenerator.generate()
