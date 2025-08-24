@@ -9,6 +9,7 @@ import { AuthState } from './state/auth.state'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import SignIn from './pages/SignIn'
+import Dashboard from './pages/Dashboard'
 
 const authLink = new SetContextLink(prevContext => {
   const token = AuthState.access_token.get()
@@ -34,6 +35,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/signin' element={<SignIn />} />
             <Route path='/signup' element={<SignIn />} />
             <Route path='/not-found' element={<NotFound />} />

@@ -15,6 +15,21 @@ export class UrlResolver {
     return this.service.findRecentUrls(10, userId)
   }
 
+  @Query(() => [UrlType])
+  async mostPopular(@CurrentUserId() userId: string): Promise<UrlType[]> {
+    return this.service.findMostPopular(userId, 10)
+  }
+
+  @Query(() => Number)
+  async count(@CurrentUserId() userId: string): Promise<number> {
+    return this.service.count(userId)
+  }
+
+  @Query(() => Number)
+  async countClicks(@CurrentUserId() userId: string): Promise<number> {
+    return (await this.service.countClicks(userId)) || 0
+  }
+
   @Public()
   @Mutation(() => UrlType)
   async createUrl(

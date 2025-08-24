@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { MoreThan, Repository } from 'typeorm'
 import { Url } from '../entities/url.entity'
 import { OnEvent } from '@nestjs/event-emitter'
 import { SlugGenerator } from '../utils/slug-generator'
@@ -113,6 +113,7 @@ export class UrlService {
       skip: skip,
       where: {
         createdById: userId,
+        clickCount: MoreThan(0),
       },
     })
   }
@@ -129,6 +130,30 @@ export class UrlService {
       where: {
         createdById: userId,
       },
+    })
+  }
+
+  /**
+   * return number of urls per user
+   * @param userId - user id
+   * @returns Number
+   */
+  async count(userId: string): Promise<number> {
+    return this.urlRepository.count({
+      where: {
+        createdById: userId,
+      },
+    })
+  }
+
+  /**
+   * return number of urls per user
+   * @param userId - user id
+   * @returns Number
+   */
+  async countClicks(userId: string): Promise<number | null> {
+    return this.urlRepository.sum('clickCount', {
+      createdById: userId,
     })
   }
 

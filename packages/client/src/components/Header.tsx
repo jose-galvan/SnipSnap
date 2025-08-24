@@ -1,7 +1,9 @@
+import { NavLink } from 'react-router'
 import { useUser } from '../hooks/useUser'
 
 const Drawer = () => {
   const { isAuthenticated, logOut } = useUser()
+
   return (
     <div className='flex gap-2 col-start-3 ml-auto mr-3'>
       {isAuthenticated && (
@@ -11,7 +13,10 @@ const Drawer = () => {
           </div>
           <ul tabIndex={0} className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm'>
             <li>
-              <a>Dashboard</a>
+              <NavLink to='/'>Home</NavLink>
+            </li>
+            <li>
+              <NavLink to='/dashboard'>Dashboard</NavLink>
             </li>
             <li onClick={logOut}>
               <a>Log Out</a>
@@ -25,11 +30,11 @@ const Drawer = () => {
 const Header = () => {
   return (
     <header className='bg-neutral-content h-16 w-full content-center grid grid-flow-col grid-cols-[8rem_1fr_8rem]'>
-      <div className='grid grid-cols-[5rem_1rem_5rem] grid-flow-col mx-auto my-auto col-start-2 gap-1'>
+      <NavLink to='/' className='grid grid-cols-[5rem_1rem_5rem] grid-flow-col mx-auto my-auto col-start-2 gap-1'>
         <span className='text-3xl font-semibold text-right'>Snip</span>
         <div className='gg-link m-auto'></div>
         <span className='text-3xl font-semibold text-left'>Snap</span>
-      </div>
+      </NavLink>
       <Drawer></Drawer>
     </header>
   )

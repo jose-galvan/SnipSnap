@@ -18,6 +18,18 @@ query mostRecent {
   }
 }
 
+query mostPopular {
+  mostPopular {
+    ...UrlFields
+  }
+}
+query count {
+  count
+}
+query countClicks {
+  countClicks
+}
+
 mutation updateSlug($input: UpdateSlugInput!) {
   updateSlug(input: $input) {
     ...UrlFields
