@@ -10,7 +10,7 @@
 }
 .gg-link::after,
 .gg-link::before {
-  content: "";
+  content: '';
   display: block;
   box-sizing: border-box;
   position: absolute;
@@ -33,7 +33,6 @@
   right: -6px;
 }
 
-
 .gg-pacman {
   box-sizing: border-box;
   position: relative;
@@ -46,7 +45,7 @@
 }
 .gg-pacman::after,
 .gg-pacman::before {
-  content: "";
+  content: '';
   display: block;
   position: absolute;
   box-sizing: border-box;
@@ -69,7 +68,6 @@
   transform: rotate(-45deg);
 }
 
-
 .gg-boy,
 .gg-boy::after,
 .gg-boy::before {
@@ -87,7 +85,7 @@
 }
 .gg-boy::after,
 .gg-boy::before {
-  content: "";
+  content: '';
   position: absolute;
   width: 2px;
   height: 2px;

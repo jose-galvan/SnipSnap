@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import ShortUrlCard from '../components/ShorUrlCard'
 import validator from 'validator'
 import Header from '../components/Header'
+import { useUser } from '../hooks/useUser'
 
 const FormSchema = yup
   .object({
@@ -29,6 +30,8 @@ export default function Home() {
   const [createSlug] = useCreateSlugMutation()
   const { enqueueSnackbar } = useSnackbar()
 
+  const { isAuthenticated } = useUser()
+
   const {
     register,
     handleSubmit,
@@ -43,14 +46,27 @@ export default function Home() {
 
   const onSubmit: SubmitHandler<CreateSlugInput> = async (data: CreateSlugInput) => {
     if (!isValid) return
-    const result = await createSlug({
-      variables: {
-        input: {
-          url: data.url,
+    try {
+      const result = await createSlug({
+        variables: {
+          input: {
+            url: data.url,
+          },
         },
-      },
-    })
-    if (result.error) {
+      })
+      if (result.data?.createUrl) {
+        setShortUrl(result.data?.createUrl)
+        enqueueSnackbar('Your Short Link is Ready!', {
+          autoHideDuration: 1200,
+          preventDuplicate: true,
+          anchorOrigin: {
+            horizontal: 'center',
+            vertical: 'bottom',
+          },
+          variant: 'success',
+        })
+      }
+    } catch (error) {
       enqueueSnackbar('Something went wrong :( Try again later!', {
         autoHideDuration: 1200,
         preventDuplicate: true,
@@ -59,18 +75,6 @@ export default function Home() {
           vertical: 'bottom',
         },
         variant: 'error',
-      })
-    }
-    if (result.data?.createUrl) {
-      setShortUrl(result.data?.createUrl)
-      enqueueSnackbar('Your Short Link is Ready!', {
-        autoHideDuration: 1200,
-        preventDuplicate: true,
-        anchorOrigin: {
-          horizontal: 'center',
-          vertical: 'bottom',
-        },
-        variant: 'success',
       })
     }
   }
@@ -120,18 +124,19 @@ export default function Home() {
             </form>
             <div className='w-full relative'>
               {shortUrl && (
-                <ShortUrlCard
-                  shortUrl={shortUrl}
-                  onClose={onCloseCard}
-                  onUpdate={updated => {
-                    console.log('updated', updated)
-                    setShortUrl(updated)
-                  }}
-                ></ShortUrlCard>
+                <ShortUrlCard shortUrl={shortUrl} onClose={onCloseCard} onUpdate={setShortUrl}></ShortUrlCard>
               )}
             </div>
           </div>
         </div>
+        {!isAuthenticated && (
+          <p className='text-sm text-center mb-6 mt-auto'>
+            <a href='/signin' className='link link-primary font-semibold'>
+              Sign In
+            </a>{' '}
+            to save your short links.
+          </p>
+        )}
       </div>
     </>
   )

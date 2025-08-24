@@ -1,12 +1,11 @@
 fragment UrlFields on UrlType {
-    id,
-    slug, 
-    clickCount, 
-    originalUrl
+  id
+  slug
+  clickCount
+  originalUrl
 }
 
-
-mutation createSlug ($input:  CreateSlugInput!){
+mutation createSlug($input: CreateSlugInput!) {
   createUrl(input: $input) {
     ...UrlFields
   }

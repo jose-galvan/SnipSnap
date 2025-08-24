@@ -15,4 +15,4 @@ generates:
           apolloReactCommonImportFrom: '@apollo/client/react'
           apolloReactHooksImportFrom: '@apollo/client/react'
     config:
-      skipTypename: true 
+      skipTypename: true

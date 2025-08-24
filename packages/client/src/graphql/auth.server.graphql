@@ -1,0 +1,15 @@
+fragment AuthFields on AuthResponse {
+  access_token
+}
+
+mutation signIn($input: SignInInput!) {
+  signIn(input: $input) {
+    ...AuthFields
+  }
+}
+
+mutation signUp($input: SignUpInput!) {
+  signUp(input: $input) {
+    ...AuthFields
+  }
+}

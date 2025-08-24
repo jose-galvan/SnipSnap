@@ -18,8 +18,11 @@
   "dependencies": {
     "@apollo/client": "^4.0.0",
     "@hookform/resolvers": "^5.2.1",
+    "@hookstate/core": "^4.0.2",
+    "@hookstate/localstored": "^4.0.2",
     "@tailwindcss/vite": "^4.1.12",
     "graphql": "^16.11.0",
+    "jwt-decode": "^4.0.0",
     "notistack": "^3.0.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
