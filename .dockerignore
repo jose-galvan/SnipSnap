@@ -2,3 +2,78 @@
 node_modules
 dist
 *.local
+
+# Build outputs
+packages/*/dist
+packages/*/build
+packages/*/coverage
+
+# Dependencies
+packages/*/node_modules
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+logs
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+.nyc_output
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Documentation
+README.md
+packages/*/README.md
+*.md
+
+# Test files
+**/*.test.*
+**/*.spec.*
+test
+tests
+packages/*/test
+
+# Temporary files
+.tmp
+.temp
+*.tmp
+*.temp
+
+
+# TypeScript build info
+*.tsbuildinfo
+packages/*/*.tsbuildinfo
+packages/*/node_modules/.tmp
+

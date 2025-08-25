@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { useForm, type SubmitHandler } from 'react-hook-form'
-import { useUpdateSlugMutation } from '../../graphql/generated/server.sdk'
+import { useUpdateSlugMutation } from '@generated/server.sdk'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useSnackbar } from 'notistack'

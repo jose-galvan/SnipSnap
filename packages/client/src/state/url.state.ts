@@ -1,5 +1,5 @@
 import { hookstate } from '@hookstate/core'
-import type { UrlType } from '../../graphql/generated/server.sdk'
+import type { UrlType } from '@generated/server.sdk'
 
 interface IUrlState {
   lastUrlGenerated: Partial<UrlType> | null

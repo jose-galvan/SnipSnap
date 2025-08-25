@@ -7,10 +7,8 @@
   "license": "MIT",
   "scripts": {
     "build": "nest build",
-    "build-docker": "docker build ./ --tag snipsnap/api:0.1",
     "start": "nest start --watch",
     "dev": "nest start --watch",
-    "dev-docker": "docker run -p 3000:3000 --detach --name snipsnap-api snipsnap/api:0.1",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "cd ../.. && npm run lint -- packages/server",

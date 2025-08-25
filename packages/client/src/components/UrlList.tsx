@@ -1,4 +1,4 @@
-import type { UrlType } from '../../graphql/generated/server.sdk'
+import type { UrlType } from '@generated/server.sdk'
 import { useSnackbar } from 'notistack'
 
 interface UrlRowProps {
