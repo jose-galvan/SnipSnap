@@ -24,7 +24,7 @@ Before running this application, make sure you have the following installed:
 
 ```bash
 git clone https://github.com/jose-galvan/SnipSnap.git
-cd snipsnap
+cd SnipSnap
 ```
 
 ### 2. Install dependencies
@@ -38,7 +38,8 @@ This will install dependencies for both the root workspace and all packages.
 ### 3. Start the database
 
 ```bash
-docker-compose up -d
+npm run db:up
+npm run migration:run
 ```
 
 This will start a PostgreSQL database on port 5432 with the following credentials:
@@ -65,41 +66,23 @@ This will start both the client and server in development mode:
 #### Root Level Scripts
 
 - `npm run dev` - Start both client and server in development mode
-- `npm run dev-client` - Start only the client development server
-- `npm run dev-server` - Start only the server development server
+- `npm run dev:client` - Start only the client development server
+- `npm run dev:server` - Start only the server development server
+- `npm run build` - Build both client and server
+- `npm run build:client` - build only the client
+- `npm run build:server` - build only the server
+- `npm run db:up` - Starts the db
+- `npm run db:down` - Stops the container running the db
+- `npm run migration:generate` - Create a new migration file
+- `npm run migration:run` - Runs all non applied migrations
+- `npm run migration:revert` - Reverts last migrations run 
+- `npm run schema:drop` - Removes the schema from the db
 - `npm run lint` - Run ESLint on all packages
 - `npm run lint:fix` - Run ESLint with auto-fix on all packages
 - `npm run format` - Format code with Prettier
 - `npm run format:check` - Check code formatting
 - `npm run lint-and-format` - Run linting and formatting together
 
-#### Client Scripts (packages/client)
-
-```bash
-cd packages/client
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Lint client code
-npm run lint:fix     # Lint and fix client code
-npm run format       # Format client code
-```
-
-#### Server Scripts (packages/server)
-
-```bash
-cd packages/server
-npm run dev          # Start development server with watch mode
-npm run build        # Build for production
-npm run start:prod   # Start production server
-npm run test         # Run unit tests
-npm run test:watch   # Run tests in watch mode
-npm run test:cov     # Run tests with coverage
-npm run test:e2e     # Run end-to-end tests
-npm run lint         # Lint server code
-npm run lint:fix     # Lint and fix server code
-npm run format       # Format server code
-```
 
 ### Code Style
 
@@ -161,17 +144,10 @@ Default connection details:
 
 ```bash
 # Start database
-docker-compose up -d
+npm run db:up
 
 # Stop database
-docker-compose down
-
-# View database logs
-docker-compose logs db
-
-# Reset database (removes all data)
-docker-compose down -v
-docker-compose up -d
+npm run db:down
 ```
 
 ## 🧪 Testing
