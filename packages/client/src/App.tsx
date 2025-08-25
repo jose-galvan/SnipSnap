@@ -1,30 +1,19 @@
 import './App.css'
-import { ApolloClient, HttpLink, InMemoryCache, ApolloLink } from '@apollo/client'
+import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client'
 import { ApolloProvider } from '@apollo/client/react'
-import { SetContextLink } from '@apollo/client/link/context'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import { SnackbarProvider } from 'notistack'
-import { AuthState } from './state/auth.state'
 
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import SignIn from './pages/SignIn'
 import Dashboard from './pages/Dashboard'
-
-const authLink = new SetContextLink(prevContext => {
-  const token = AuthState.access_token.get()
-  return {
-    headers: {
-      ...prevContext.headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  }
-})
-
-const httpLink = new HttpLink({ uri: import.meta.env.VITE_SERVER_URL })
+import { errorLink } from './graphql/links/error'
+import { authLink } from './graphql/links/auth'
+import { httpLink } from './graphql/links/http'
 
 const client = new ApolloClient({
-  link: ApolloLink.from([authLink, httpLink]),
+  link: ApolloLink.from([errorLink, authLink, httpLink]),
   cache: new InMemoryCache(),
 })
 
