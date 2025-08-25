@@ -5,7 +5,7 @@ import {
   useMostRecentQuery,
   useCountQuery,
   type UrlType,
-} from '../../graphql/generated/server.sdk'
+} from '@generated/server.sdk'
 import Header from '../components/Header'
 import UrlList from '../components/UrlList'
 import { useUser } from '../hooks/useUser'

@@ -8,6 +8,7 @@
     "dev": "npm run db:up && concurrently -n server,client -c '#FF9800,#7E2D40' 'cd packages/server && npm run dev' 'cd packages/client && npm run dev'",
     "dev:server": "cd packages/server && npm run dev",
     "dev:client": "cd packages/client && npm run dev",
+    "dev:docker": "npm run build:docker && docker run -p 80:80 --detach --name snipsnap snipsnap:0.1",
     "build": "concurrently -n server,client -c '#FF9800,#7E2D40' 'cd packages/server && npm run build' 'cd packages/client && npm run build'",
     "build:server": "cd packages/server && npm run build",
     "build:client": "cd packages/client && npm run build",

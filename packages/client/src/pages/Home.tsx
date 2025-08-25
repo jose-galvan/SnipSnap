@@ -1,4 +1,4 @@
-import { useCreateSlugMutation, type CreateSlugInput } from '../../graphql/generated/server.sdk'
+import { useCreateSlugMutation, type CreateSlugInput } from '@generated/server.sdk'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useSnackbar } from 'notistack'
 import { yupResolver } from '@hookform/resolvers/yup'

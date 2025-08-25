@@ -1,6 +1,5 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export namespace Env {
-  export const BASE_URL = 'BASE_URL'
-
   export const DB_HOST = 'DB_HOST'
   export const DB_PORT = 'DB_PORT'
   export const DB_USERNAME = 'DB_USERNAME'
