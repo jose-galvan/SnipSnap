@@ -13,7 +13,7 @@ export class UrlService {
     private readonly urlRepository: Repository<Url>
   ) {}
 
-  private async create(dto: Partial<Url>): Promise<Url> {
+  private async create(dto: Pick<Url, 'originalUrl' | 'slug' | 'createdById'>): Promise<Url> {
     const url = this.urlRepository.create({
       ...dto,
     })
@@ -25,7 +25,7 @@ export class UrlService {
    * @param url - the url the slug will redirect to
    * @returns Url Object containing the slug and url
    */
-  async createWithGeneratedSlug(url: string, userId?: string): Promise<Url> {
+  async createWithGeneratedSlug(url: string, userId: string | null): Promise<Url> {
     let slug = SlugGenerator.generateFromText(url)
     let attempts = 0
     const maxAttempts = 10

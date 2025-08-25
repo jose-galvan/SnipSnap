@@ -40,19 +40,19 @@ import { AuthModule } from './auth/auth.module'
         {
           name: 'short',
           ttl: 1000,
-          limit: configService.get(Env.SHORT_THROTTLE) || 3,
+          limit: configService.get<number>(Env.SHORT_THROTTLE, 3),
         },
         // requests limit within 10 seconds
         {
           name: 'medium',
           ttl: 10000,
-          limit: configService.get(Env.MEDIUM_THROTTLE) || 10,
+          limit: configService.get<number>(Env.MEDIUM_THROTTLE, 10),
         },
         // requests limit per hour
         {
           name: 'long',
           ttl: 3600 * 1000,
-          limit: configService.get(Env.LONG_THROTTLE) || 100,
+          limit: configService.get<number>(Env.LONG_THROTTLE, 100),
         },
       ],
     }),
