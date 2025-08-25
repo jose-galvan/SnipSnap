@@ -68,7 +68,7 @@ export default function Home() {
           variant: 'success',
         })
       }
-    } catch (error) {
+    } catch {
       enqueueSnackbar('Something went wrong :( Try again later!', {
         autoHideDuration: 1200,
         preventDuplicate: true,

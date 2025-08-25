@@ -24,8 +24,12 @@ const UrlRow = ({ url }: UrlRowProps) => {
     <li className='list-row h-16'>
       <div className='text-4xl font-thin opacity-30 tabular-nums'>{url.clickCount}</div>
       <div className='list-col-grow items-center flex flex-col'>
-        <div className='text-xs font-semibold opacity-60 my-auto'>
-          {import.meta.env.VITE_BASE_URL}/{url.slug}
+        <div className='my-auto'>
+          <div className='tooltip' data-tip={url.originalUrl}>
+            <span className='text-xs font-semibold opacity-60 cursor-pointer'>
+              {import.meta.env.VITE_BASE_URL}/{url.slug}
+            </span>
+          </div>
         </div>
       </div>
       <button type='button' onClick={onCopy} className='btn btn-neutral'>

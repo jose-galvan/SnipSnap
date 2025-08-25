@@ -1,8 +1,21 @@
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import { useUser } from '../hooks/useUser'
+
+interface NavItem {
+  name: string
+  path: string
+}
+
+const NavItems: Record<string, NavItem[]> = {
+  ['/dashboard']: [{ name: 'Home', path: '/' }],
+  ['/']: [{ name: 'Dashboard', path: '/dashboard' }],
+}
 
 const Drawer = () => {
   const { isAuthenticated, logOut } = useUser()
+  const location = useLocation()
+
+  const navItems: NavItem[] = NavItems[location.pathname]
 
   return (
     <div className='flex gap-2 col-start-3 ml-auto mr-3'>
@@ -12,12 +25,13 @@ const Drawer = () => {
             <span className='gg-boy w-10 m-auto'></span>
           </div>
           <ul tabIndex={0} className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm'>
-            <li>
-              <NavLink to='/'>Home</NavLink>
-            </li>
-            <li>
-              <NavLink to='/dashboard'>Dashboard</NavLink>
-            </li>
+            {navItems.map(item => {
+              return (
+                <li key={item.name}>
+                  <NavLink to={item.path}>{item.name}</NavLink>
+                </li>
+              )
+            })}
             <li onClick={logOut}>
               <a>Log Out</a>
             </li>

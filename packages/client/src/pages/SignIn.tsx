@@ -84,7 +84,7 @@ const SignIn = () => {
         UrlState.lastUrlGenerated.set(none)
         navigate('/')
       }
-    } catch (error) {
+    } catch {
       enqueueSnackbar('Something went wrong! Verify your credentials or Try again later', {
         autoHideDuration: 1200,
         preventDuplicate: true,
@@ -144,7 +144,7 @@ const SignIn = () => {
             </NavLink>
           </p>
           <p className={!isSignUp ? 'text-sm text-center mt-4' : 'hidden'}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <NavLink to='/signup' className='link link-primary font-semibold'>
               Sign Up
             </NavLink>
