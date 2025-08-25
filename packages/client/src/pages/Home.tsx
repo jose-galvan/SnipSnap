@@ -11,6 +11,7 @@ import { useUser } from '../hooks/useUser'
 import { none, useHookstate } from '@hookstate/core'
 import { UrlState } from '../state/url.state'
 import { NavLink } from 'react-router'
+import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
 const FormSchema = yup
   .object({
@@ -59,23 +60,13 @@ export default function Home() {
       if (result.data?.createUrl) {
         urlState.lastUrlGenerated.set(result.data?.createUrl)
         enqueueSnackbar('Your Short Link is Ready!', {
-          autoHideDuration: 1200,
-          preventDuplicate: true,
-          anchorOrigin: {
-            horizontal: 'center',
-            vertical: 'bottom',
-          },
+          ...DEFAULT_SNACKBAR_CONFIG,
           variant: 'success',
         })
       }
     } catch {
       enqueueSnackbar('Something went wrong :( Try again later!', {
-        autoHideDuration: 1200,
-        preventDuplicate: true,
-        anchorOrigin: {
-          horizontal: 'center',
-          vertical: 'bottom',
-        },
+        ...DEFAULT_SNACKBAR_CONFIG,
         variant: 'error',
       })
     }

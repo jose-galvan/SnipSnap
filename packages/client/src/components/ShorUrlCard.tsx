@@ -7,6 +7,7 @@ import { useSnackbar } from 'notistack'
 import { UrlState } from '../state/url.state'
 import { useHookstate } from '@hookstate/core'
 import { useEffect } from 'react'
+import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
 interface ShortUrlCardProps {
   onClose: () => void
@@ -62,12 +63,7 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
       UrlState.lastUrlGenerated.set(res.data?.updateSlug)
       reset({ slug: res.data?.updateSlug.slug! })
       enqueueSnackbar('Short URL Updated!', {
-        autoHideDuration: 800,
-        preventDuplicate: true,
-        anchorOrigin: {
-          horizontal: 'center',
-          vertical: 'bottom',
-        },
+        ...DEFAULT_SNACKBAR_CONFIG,
         variant: 'success',
       })
     }
@@ -76,12 +72,7 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
   const onCopySlug = async () => {
     await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${shortUrl.value?.slug!}`)
     enqueueSnackbar('Copied!', {
-      autoHideDuration: 800,
-      preventDuplicate: true,
-      anchorOrigin: {
-        horizontal: 'center',
-        vertical: 'bottom',
-      },
+      ...DEFAULT_SNACKBAR_CONFIG,
       variant: 'success',
     })
   }

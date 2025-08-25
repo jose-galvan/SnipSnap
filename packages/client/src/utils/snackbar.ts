@@ -5,3 +5,9 @@ declare module 'notistack' {
     render(): ReactNode
   }
 }
+
+export const DEFAULT_SNACKBAR_CONFIG = {
+  autoHideDuration: 1200,
+  preventDuplicate: true,
+  anchorOrigin: { horizontal: 'center', vertical: 'bottom' } as const,
+}

@@ -2,22 +2,29 @@ import { CombinedGraphQLErrors } from '@apollo/client'
 import { ErrorLink } from '@apollo/client/link/error'
 import { enqueueSnackbar } from 'notistack'
 import { clearAuthState } from '../../state/auth.state'
+import { DEFAULT_SNACKBAR_CONFIG } from '../../utils/snackbar'
+
+const rateLimitHandler = (): void => {
+  enqueueSnackbar('You exceeded the request limit! try again later', {
+    ...DEFAULT_SNACKBAR_CONFIG,
+    variant: 'error',
+  })
+}
+
+export const constErrorHandlers: Record<string, () => void> = {
+  ['Unauthorized']: clearAuthState,
+  ['ThrottlerException: Too Many Requests']: rateLimitHandler,
+}
+
 export const errorLink = new ErrorLink(({ error }) => {
   if (CombinedGraphQLErrors.is(error)) {
     error.errors.forEach(({ message }) => {
-      if (message.includes('Too Many Requests')) {
-        enqueueSnackbar('You exceeded the request limit! try again later', {
-          autoHideDuration: 1200,
-          preventDuplicate: true,
-          anchorOrigin: {
-            horizontal: 'center',
-            vertical: 'bottom',
-          },
-          variant: 'error',
-        })
-      }
-      if (message.includes('Unauthorized')) {
-        clearAuthState()
+      const handlerKey = Object.keys(constErrorHandlers).find(key => message.includes(key))
+
+      if (handlerKey) {
+        constErrorHandlers[handlerKey]()
+      } else {
+        console.log('Unhandled GraphQL Error:', message)
       }
     })
   }

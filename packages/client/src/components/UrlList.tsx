@@ -1,5 +1,6 @@
 import type { UrlType } from '@generated/server.sdk'
 import { useSnackbar } from 'notistack'
+import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
 interface UrlRowProps {
   url: Partial<UrlType>
@@ -10,12 +11,7 @@ const UrlRow = ({ url }: UrlRowProps) => {
   const onCopy = async () => {
     await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${url.slug!}`)
     enqueueSnackbar('Copied!', {
-      autoHideDuration: 800,
-      preventDuplicate: true,
-      anchorOrigin: {
-        horizontal: 'center',
-        vertical: 'bottom',
-      },
+      ...DEFAULT_SNACKBAR_CONFIG,
       variant: 'success',
     })
   }

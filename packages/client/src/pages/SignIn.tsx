@@ -2,7 +2,13 @@ import { NavLink, useLocation, useNavigate } from 'react-router'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useForm, type SubmitHandler } from 'react-hook-form'
-import { useSignInMutation, useSignUpMutation, useSetUrlOwnerMutation } from '@generated/server.sdk'
+import {
+  useSignInMutation,
+  useSignUpMutation,
+  useSetUrlOwnerMutation,
+  type SignInInput,
+  type SignUpInput,
+} from '@generated/server.sdk'
 import { AuthState, type AuthUser } from '../state/auth.state'
 import { decodeToken } from '../utils/token'
 import { enqueueSnackbar } from 'notistack'
@@ -11,6 +17,9 @@ import { useUser } from '../hooks/useUser'
 import { none, useHookstate } from '@hookstate/core'
 import { clearUrlState, UrlState } from '../state/url.state'
 import { isGraphQLError } from '../utils/error'
+import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
+
+type FormData = SignInInput | SignUpInput
 
 const FormSchema = yup
   .object({
@@ -24,7 +33,7 @@ const FormSchema = yup
   })
   .required('Please enter your password')
 
-const fields = [
+const fields: Array<{ name: keyof FormData; label: string; type: string }> = [
   { name: 'username', label: 'Username', type: 'text' },
   { name: 'password', type: 'password', label: 'Password' },
 ]
@@ -51,7 +60,7 @@ const SignIn = () => {
     formState: { errors, isValid },
     setError,
     clearErrors,
-  } = useForm({
+  } = useForm<FormData>({
     resolver: yupResolver(FormSchema),
     mode: 'all',
     reValidateMode: 'onChange',
@@ -65,55 +74,63 @@ const SignIn = () => {
     })
   }
 
-  const handleMutation = async (input: any, mutation: (args: any) => Promise<any>) => {
-    const responseKey = isSignUp ? 'signUp' : 'signIn'
-    try {
-      const response = await mutation({
+  const handlePostAuth = async () => {
+    if (shortUrl.value?.id && !shortUrl.value.createdById) {
+      await setOwner({
         variables: {
-          input,
+          id: shortUrl.value.id,
         },
       })
-      if (response.data?.[`${responseKey}`]) {
-        setUser(response.data?.[`${responseKey}`].access_token)
+    }
+    clearUrlState()
+    navigate('/')
+  }
 
-        // this updates the url's owner of the last url crearted after user signin/signup
-        if (shortUrl.value?.id && !shortUrl.value.createdById) {
-          await setOwner({
-            variables: {
-              id: shortUrl.value.id,
-            },
-          })
-        }
-        clearUrlState()
-        navigate('/')
+  const handleSignIn = async (input: SignInInput) => {
+    try {
+      const response = await signIn({ variables: { input } })
+      if (response.data?.signIn) {
+        setUser(response.data.signIn.access_token)
+        await handlePostAuth()
       }
     } catch (err: unknown) {
-      if (isGraphQLError(err)) {
-        const hasUnauthorizedError = err.errors.some(e => e.message.includes('Unauthorized'))
-        if (hasUnauthorizedError) {
-          setError('root', { message: 'Invalid username or password' })
-          return
-        }
-      }
-      enqueueSnackbar('Something went wrong! Verify your credentials or Try again later', {
-        autoHideDuration: 1200,
-        preventDuplicate: true,
-        anchorOrigin: {
-          horizontal: 'center',
-          vertical: 'bottom',
-        },
-        variant: 'error',
-      })
+      handleAuthError(err)
     }
   }
 
-  const onSubmit: SubmitHandler<any> = async (data: any) => {
+  const handleSignUp = async (input: SignUpInput) => {
+    try {
+      const response = await signUp({ variables: { input } })
+      if (response.data?.signUp) {
+        setUser(response.data.signUp.access_token)
+        await handlePostAuth()
+      }
+    } catch (err: unknown) {
+      handleAuthError(err)
+    }
+  }
+
+  const handleAuthError = (err: unknown) => {
+    if (isGraphQLError(err)) {
+      const hasUnauthorizedError = err.errors.some(e => e.message.includes('Unauthorized'))
+      if (hasUnauthorizedError) {
+        setError('root', { message: 'Invalid username or password' })
+        return
+      }
+    }
+    enqueueSnackbar('Something went wrong! Try again later.', {
+      ...DEFAULT_SNACKBAR_CONFIG,
+      variant: 'error',
+    })
+  }
+
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     if (!isValid) return
 
     if (isSignUp) {
-      return handleMutation(data, signUp)
+      return handleSignUp(data)
     } else {
-      return handleMutation(data, signIn)
+      return handleSignIn(data)
     }
   }
 
@@ -137,14 +154,14 @@ const SignIn = () => {
                 <input
                   id={name}
                   type={type}
-                  {...register(name as any, {
+                  {...register(name, {
                     onChange: () => clearErrors('root'),
                   })}
                   className='input input-bordered w-full'
                 />
-                {(errors as any)[`${name}`]?.message && (
+                {errors[name]?.message && (
                   <p className='text-red-400 absolute w-full -bottom-1 left-1/2 -translate-x-1/2 text-center'>
-                    {(errors as any)[`${name}`]?.message}
+                    {errors[name]?.message}
                   </p>
                 )}
               </div>
