@@ -9,7 +9,8 @@ import { enqueueSnackbar } from 'notistack'
 import { useEffect } from 'react'
 import { useUser } from '../hooks/useUser'
 import { none, useHookstate } from '@hookstate/core'
-import { UrlState } from '../state/url.state'
+import { clearUrlState, UrlState } from '../state/url.state'
+import { isGraphQLError } from '../utils/error'
 
 const FormSchema = yup
   .object({
@@ -48,6 +49,8 @@ const SignIn = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    setError,
+    clearErrors,
   } = useForm({
     resolver: yupResolver(FormSchema),
     mode: 'all',
@@ -81,10 +84,17 @@ const SignIn = () => {
             },
           })
         }
-        UrlState.lastUrlGenerated.set(none)
+        clearUrlState()
         navigate('/')
       }
-    } catch {
+    } catch (err: unknown) {
+      if (isGraphQLError(err)) {
+        const hasUnauthorizedError = err.errors.some(e => e.message.includes('Unauthorized'))
+        if (hasUnauthorizedError) {
+          setError('root', { message: 'Invalid username or password' })
+          return
+        }
+      }
       enqueueSnackbar('Something went wrong! Verify your credentials or Try again later', {
         autoHideDuration: 1200,
         preventDuplicate: true,
@@ -124,7 +134,14 @@ const SignIn = () => {
                 <label htmlFor={name} className='label'>
                   <span className='label-text'>{label}</span>
                 </label>
-                <input id={name} type={type} {...register(name as any)} className='input input-bordered w-full' />
+                <input
+                  id={name}
+                  type={type}
+                  {...register(name as any, {
+                    onChange: () => clearErrors('root'),
+                  })}
+                  className='input input-bordered w-full'
+                />
                 {(errors as any)[`${name}`]?.message && (
                   <p className='text-red-400 absolute w-full -bottom-1 left-1/2 -translate-x-1/2 text-center'>
                     {(errors as any)[`${name}`]?.message}
@@ -132,7 +149,7 @@ const SignIn = () => {
                 )}
               </div>
             ))}
-
+            {errors.root?.message && <p className='text-red-400 w-full text-center'>{errors.root?.message}</p>}
             <button type='submit' disabled={!isValid} className='btn btn-primary w-full'>
               {action}
             </button>

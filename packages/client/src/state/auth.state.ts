@@ -20,3 +20,10 @@ export const AuthState = hookstate<IAuthState>(
     key: 'SniSnap-Auth-X',
   })
 )
+
+export const clearAuthState = () => {
+  AuthState.merge({
+    user: null,
+    access_token: null,
+  })
+}

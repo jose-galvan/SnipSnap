@@ -16,17 +16,22 @@ const Dashboard = () => {
   const countClicks = useCountClicksQuery()
   const count = useCountQuery()
 
+  useEffect(() => {
+    const refetch = async () => {
+      await popular.refetch()
+      await recent.refetch()
+      await countClicks.refetch()
+      await count.refetch()
+    }
+    refetch()
+  }, [])
+
   const { logOut, isAuthenticated } = useUser()
   useEffect(() => {
     if (!isAuthenticated) {
       logOut()
     }
   }, [isAuthenticated])
-  useEffect(() => {
-    if ([popular.error?.message, recent.error?.message].includes('Unauthorized')) {
-      logOut()
-    }
-  }, [popular, recent])
 
   return (
     <div className='min-h-screen flex items-center bg-base-200 flex-col max-h-screen'>
@@ -49,7 +54,7 @@ const Dashboard = () => {
           {recent.data?.mostRecent && (
             <UrlList title='Recent URLS' urls={recent.data?.mostRecent as Partial<UrlType>[]}></UrlList>
           )}
-          {popular.data?.mostPopular.length && (
+          {popular.data?.mostPopular && (
             <UrlList title='Most Popular URLS' urls={popular.data?.mostPopular as Partial<UrlType>[]}></UrlList>
           )}
         </div>

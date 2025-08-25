@@ -8,3 +8,9 @@ interface IUrlState {
 export const UrlState = hookstate<IUrlState>({
   lastUrlGenerated: null,
 })
+
+export const clearUrlState = () => {
+  UrlState.merge({
+    lastUrlGenerated: null,
+  })
+}
