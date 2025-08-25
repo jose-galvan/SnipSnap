@@ -83,47 +83,22 @@ This will start both the client and server in development mode:
 - `npm run format:check` - Check code formatting
 - `npm run lint-and-format` - Run linting and formatting together
 
-
-### Code Style
-
-This project uses:
-
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **TypeScript** for type safety
-
-Code style preferences:
-
-- No semicolons
-- Single quotes
-- 120 character line limit
-
 ## 🐳 Docker Support
 
-Both client and server have Docker support:
+Both client and server have Docker support, they run behind a reverse proxy with Nginx:
 
-### Build Docker Images
+### Build Docker Image
 
 ```bash
-# Build server image
-cd packages/server
-npm run build-docker
-
-# Build client image
-cd packages/client
-npm run build-docker
+npm run build:docker
 ```
 
 ### Run with Docker
 
 ```bash
-# Run server container
-cd packages/server
-npm run dev-docker
+# Runs both services; client and server behind a reverse proxy
+npm run dev:docker
 
-# Run client container
-cd packages/client
-npm run dev-docker
 ```
 
 ## 🗄️ Database
@@ -149,6 +124,21 @@ npm run db:up
 # Stop database
 npm run db:down
 ```
+
+### Code Style
+
+This project uses:
+
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **TypeScript** for type safety
+
+Code style preferences:
+
+- No semicolons
+- Single quotes
+- 120 character line limit
+
 
 ## 🧪 Testing
 
@@ -177,15 +167,14 @@ snipsnap/
 │   ├── client/                 # React frontend
 │   │   ├── src/
 │   │   ├── public/
-│   │   ├── Dockerfile
 │   │   └── package.json
 │   └── server/                 # NestJS backend
 │       ├── src/
 │       ├── test/
-│       ├── Dockerfile
 │       └── package.json
 ├── docker-compose.yml          # Database configuration
-├── package.json               # Root workspace configuration
+├── Dockerfile                  # Docker image with reverse proxy for both services
+├── package.json                # Root workspace configuration
 └── README.md
 ```
 
@@ -198,35 +187,41 @@ Create environment files as needed:
 #### Server (.env)
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/dev
+# Application Configuration
 PORT=3000
+NODE_ENV=development
+DEFAULT_REDIRECT = 'http://localhost:5173/not-found'
+
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=user
+DB_PASSWORD=password
+DB_NAME=dev
+DB_SYNCHRONIZE=true
+DB_LOGGING=false
+
+
+# Rate limiting
+SHORT_THROTTLE = 3
+MEDIUM_THROTTLE = 10
+LONG_THROTTLE = 100
+
+
+# Auth
+PASSWORD_SALT= 'mySaltCode'
+JWT_SECRET = 'myJWTSecret'
+JWT_TTL = '1h'
 ```
 
 #### Client (.env)
 
 ```env
-VITE_API_URL=http://localhost:3000
+VITE_SERVER_URL=http://localhost:3000/api/graphql
+VITE_BASE_URL=http://localhost:3000
+
 ```
 
-## 🚀 Production Deployment
-
-### Building for Production
-
-```bash
-# Build both client and server
-npm run build
-
-# Or build individually
-cd packages/client && npm run build
-cd packages/server && npm run build
-```
-
-### Production Server
-
-```bash
-cd packages/server
-npm run start:prod
-```
 
 ## 📝 License
 
