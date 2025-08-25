@@ -2,6 +2,12 @@
 
 A modern URL shortener application built with React and NestJS, featuring a clean interface and robust API.
 
+## ⚠️ Important Notes
+
+### URL Validation
+
+Currently, URLs containing ports (e.g., `http://localhost:3000`) are not detected as valid URLs and cannot be shortened. This is a known limitation of the current validation implementation.
+
 ## 🏗️ Architecture
 
 This project is organized as a monorepo with two main packages:
@@ -75,7 +81,7 @@ This will start both the client and server in development mode:
 - `npm run db:down` - Stops the container running the db
 - `npm run migration:generate` - Create a new migration file
 - `npm run migration:run` - Runs all non applied migrations
-- `npm run migration:revert` - Reverts last migrations run 
+- `npm run migration:revert` - Reverts last migrations run
 - `npm run schema:drop` - Removes the schema from the db
 - `npm run lint` - Run ESLint on all packages
 - `npm run lint:fix` - Run ESLint with auto-fix on all packages
@@ -138,7 +144,6 @@ Code style preferences:
 - No semicolons
 - Single quotes
 - 120 character line limit
-
 
 ## 🧪 Testing
 
@@ -221,7 +226,6 @@ VITE_SERVER_URL=http://localhost:3000/api/graphql
 VITE_BASE_URL=http://localhost:3000
 
 ```
-
 
 ## 📝 License
 

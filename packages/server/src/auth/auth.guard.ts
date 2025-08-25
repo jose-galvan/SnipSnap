@@ -19,7 +19,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
     if (isPublic) {
       try {
         await super.canActivate(context)
-      } catch (err) {}
+      } catch {}
       return true
     }
 
