@@ -11,6 +11,7 @@
     "build": "concurrently -n server,client -c '#FF9800,#7E2D40' 'cd packages/server && npm run build' 'cd packages/client && npm run build'",
     "build:server": "cd packages/server && npm run build",
     "build:client": "cd packages/client && npm run build",
+    "build:docker": "docker build ./ --tag snipsnap:0.1",
     "db:up": "docker-compose up -d",
     "db:down": "docker-compose down",
     "migration:generate": "cd packages/server && npm run typeorm -- migration:generate",
