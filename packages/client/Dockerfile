@@ -8,7 +8,7 @@ WORKDIR .
 ARG ENV
 
 COPY package*.json ./
-RUN npm install --package-lock-only && npm ci
+RUN npm install --package-lock-only --legacy-peer-deps && npm ci --legacy-peer-deps
 
 COPY . .
 RUN npx npm run build --mode $ENV
