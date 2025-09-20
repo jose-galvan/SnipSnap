@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router'
 import { useUser } from '../hooks/useUser'
-import { clearUrlState } from '../state/url.state'
+import { useUrlState } from '../state/url.state'
 
 interface NavItem {
   name: string
@@ -15,7 +15,7 @@ const NavItems: Record<string, NavItem[]> = {
 const Drawer = () => {
   const { isAuthenticated, logOut } = useUser()
   const location = useLocation()
-
+  const { clear } = useUrlState()
   const navItems: NavItem[] = NavItems[location.pathname]
 
   return (
@@ -29,7 +29,7 @@ const Drawer = () => {
             {navItems.map(item => {
               return (
                 <li key={item.name}>
-                  <NavLink onClick={clearUrlState} to={item.path}>
+                  <NavLink onClick={clear} to={item.path}>
                     {item.name}
                   </NavLink>
                 </li>

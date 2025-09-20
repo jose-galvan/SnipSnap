@@ -1,8 +1,8 @@
 import { SetContextLink } from '@apollo/client/link/context'
-import { AuthState } from '../../state/auth.state'
+import { TokenStorageKey } from '../../state/auth.state'
 
 export const authLink = new SetContextLink(prevContext => {
-  const token = AuthState.access_token.get()
+  const token = localStorage.getItem(TokenStorageKey)
   return {
     headers: {
       ...prevContext.headers,

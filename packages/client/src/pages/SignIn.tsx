@@ -9,13 +9,11 @@ import {
   type SignInInput,
   type SignUpInput,
 } from '@generated/server.sdk'
-import { AuthState, type AuthUser } from '../state/auth.state'
-import { decodeToken } from '../utils/token'
+import { useAuth } from '../state/auth.state'
 import { enqueueSnackbar } from 'notistack'
 import { useEffect } from 'react'
 import { useUser } from '../hooks/useUser'
-import { none, useHookstate } from '@hookstate/core'
-import { clearUrlState, UrlState } from '../state/url.state'
+import { useUrlState } from '../state/url.state'
 import { isGraphQLError } from '../utils/error'
 import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
@@ -45,9 +43,9 @@ const SignIn = () => {
   const [setOwner] = useSetUrlOwnerMutation()
   const isSignUp = location.pathname.includes('signup')
   const navigate = useNavigate()
-  const shortUrl = useHookstate(UrlState).lastUrlGenerated
+  const { lastGenerated, clear } = useUrlState()
   const { isAuthenticated } = useUser()
-
+  const { updateToken } = useAuth()
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/')
@@ -66,23 +64,15 @@ const SignIn = () => {
     reValidateMode: 'onChange',
   })
 
-  const setUser = (token: string) => {
-    const decoded = decodeToken<AuthUser>(token)
-    AuthState.merge({
-      access_token: token,
-      user: decoded,
-    })
-  }
-
   const handlePostAuth = async () => {
-    if (shortUrl.value?.id && !shortUrl.value.createdById) {
+    if (lastGenerated?.id && !lastGenerated.createdById) {
       await setOwner({
         variables: {
-          id: shortUrl.value.id,
+          id: lastGenerated.id,
         },
       })
     }
-    clearUrlState()
+    clear()
     navigate('/')
   }
 
@@ -90,7 +80,7 @@ const SignIn = () => {
     try {
       const response = await signIn({ variables: { input } })
       if (response.data?.signIn) {
-        setUser(response.data.signIn.access_token)
+        updateToken(response.data.signIn.access_token)
         await handlePostAuth()
       }
     } catch (err: unknown) {
@@ -102,7 +92,7 @@ const SignIn = () => {
     try {
       const response = await signUp({ variables: { input } })
       if (response.data?.signUp) {
-        setUser(response.data.signUp.access_token)
+        updateToken(response.data.signUp.access_token)
         await handlePostAuth()
       }
     } catch (err: unknown) {
@@ -186,7 +176,7 @@ const SignIn = () => {
           <p className='text-sm text-center'>
             <a
               onClick={() => {
-                UrlState.lastUrlGenerated.set(none)
+                clear()
                 navigate('/')
               }}
               className='link link-primary font-semibold'

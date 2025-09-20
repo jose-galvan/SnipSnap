@@ -8,8 +8,7 @@ import ShortUrlCard from '../components/ShorUrlCard'
 import validator from 'validator'
 import Header from '../components/Header'
 import { useUser } from '../hooks/useUser'
-import { none, useHookstate } from '@hookstate/core'
-import { UrlState } from '../state/url.state'
+import { useUrlState } from '../state/url.state'
 import { NavLink } from 'react-router'
 import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
@@ -32,7 +31,7 @@ const FormSchema = yup
 export default function Home() {
   const [createSlug] = useCreateSlugMutation()
   const { enqueueSnackbar } = useSnackbar()
-  const urlState = useHookstate(UrlState)
+  const { setLastGenerated, clear, lastGenerated } = useUrlState()
   const { isAuthenticated } = useUser()
 
   const {
@@ -58,7 +57,7 @@ export default function Home() {
         },
       })
       if (result.data?.createUrl) {
-        urlState.lastUrlGenerated.set(result.data?.createUrl)
+        setLastGenerated(result.data?.createUrl)
         enqueueSnackbar('Your Short Link is Ready!', {
           ...DEFAULT_SNACKBAR_CONFIG,
           variant: 'success',
@@ -88,7 +87,7 @@ export default function Home() {
   }, [])
 
   const onCloseCard = () => {
-    urlState.lastUrlGenerated.set(none)
+    clear()
     reset()
   }
 
@@ -116,7 +115,7 @@ export default function Home() {
               </div>
             </form>
             <div className='w-full relative'>
-              {urlState.lastUrlGenerated.value && <ShortUrlCard onClose={onCloseCard}></ShortUrlCard>}
+              {lastGenerated && <ShortUrlCard onClose={onCloseCard}></ShortUrlCard>}
             </div>
           </div>
         </div>

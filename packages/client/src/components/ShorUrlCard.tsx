@@ -4,8 +4,7 @@ import { useUpdateSlugMutation } from '@generated/server.sdk'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useSnackbar } from 'notistack'
-import { UrlState } from '../state/url.state'
-import { useHookstate } from '@hookstate/core'
+import { useUrlState } from '../state/url.state'
 import { useEffect } from 'react'
 import { DEFAULT_SNACKBAR_CONFIG } from '../utils/snackbar'
 
@@ -27,13 +26,13 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
     onClose()
   }
 
-  const shortUrl = useHookstate(UrlState).lastUrlGenerated
+  const { lastGenerated, setLastGenerated } = useUrlState()
 
   useEffect(() => {
-    if (shortUrl.value?.slug) {
-      reset({ slug: shortUrl.value.slug! })
+    if (lastGenerated?.slug) {
+      reset({ slug: lastGenerated.slug! })
     }
-  }, [shortUrl.value?.slug])
+  }, [lastGenerated?.slug])
 
   const {
     reset,
@@ -45,7 +44,7 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
-      slug: shortUrl.value?.slug!,
+      slug: lastGenerated?.slug!,
     },
   })
 
@@ -54,13 +53,13 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
     const res = await updateSlug({
       variables: {
         input: {
-          id: shortUrl.value?.id!,
+          id: lastGenerated?.id!,
           slug: data.slug,
         },
       },
     })
     if (res.data?.updateSlug) {
-      UrlState.lastUrlGenerated.set(res.data?.updateSlug)
+      setLastGenerated(res.data?.updateSlug)
       reset({ slug: res.data?.updateSlug.slug! })
       enqueueSnackbar('Short URL Updated!', {
         ...DEFAULT_SNACKBAR_CONFIG,
@@ -70,7 +69,7 @@ const ShortUrlCard = ({ onClose }: ShortUrlCardProps) => {
   }
 
   const onCopySlug = async () => {
-    await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${shortUrl.value?.slug!}`)
+    await navigator.clipboard.writeText(`${import.meta.env.VITE_BASE_URL}/${lastGenerated?.slug!}`)
     enqueueSnackbar('Copied!', {
       ...DEFAULT_SNACKBAR_CONFIG,
       variant: 'success',

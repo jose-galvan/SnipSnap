@@ -1,5 +1,4 @@
-import { useHookstate } from '@hookstate/core'
-import { AuthState, clearAuthState } from '../state/auth.state'
+import { useAuth } from '../state/auth.state'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router'
 
@@ -13,12 +12,12 @@ import { useNavigate } from 'react-router'
  */
 
 export const useUser = () => {
-  const user = useHookstate(AuthState).user
-  const isAuthenticated = !!user.value?.sub
+  const { user, clear } = useAuth()
+  const isAuthenticated = !!user?.sub
   const navigate = useNavigate()
 
   const logOut = useCallback(() => {
-    clearAuthState()
+    clear()
     navigate('/')
   }, [])
 

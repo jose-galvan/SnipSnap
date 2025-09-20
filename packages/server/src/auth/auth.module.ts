@@ -16,7 +16,7 @@ import { JwtStrategy } from './jwt.strategy'
         return {
           secret: configService.get<string>(Env.JWT_SECRET),
           signOptions: {
-            expiresIn: configService.get<string>(Env.JWT_TTL, '1h'),
+            expiresIn: configService.get<string>(Env.JWT_TTL, '2m'),
           },
         }
       },

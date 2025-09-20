@@ -1,7 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client'
 import { ErrorLink } from '@apollo/client/link/error'
 import { enqueueSnackbar } from 'notistack'
-import { clearAuthState } from '../../state/auth.state'
 import { DEFAULT_SNACKBAR_CONFIG } from '../../utils/snackbar'
 
 const rateLimitHandler = (): void => {
@@ -12,7 +11,10 @@ const rateLimitHandler = (): void => {
 }
 
 export const constErrorHandlers: Record<string, () => void> = {
-  ['Unauthorized']: clearAuthState,
+  ['Unauthorized']: () => {
+    console.log('auth failed')
+    window.dispatchEvent(new CustomEvent('auth:clear'))
+  },
   ['ThrottlerException: Too Many Requests']: rateLimitHandler,
 }
 
