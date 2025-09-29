@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useReducer } from 'react'
 import { decodeToken } from '../utils/token'
 
 export const TokenStorageKey = 'SniSnap-Auth-X'
@@ -10,41 +10,71 @@ export interface AuthUser {
 interface IAuthState {
   user: AuthUser | null
   token: string | null
-  updateToken: (token: string | null) => void
-  clear: () => void
 }
 
-const AuthContext = createContext<IAuthState>({
+const AuthContext = createContext<
+  IAuthState & {
+    updateToken: (token: string | null) => void
+    clear: () => void
+  }
+>({
   user: null,
   token: null,
   updateToken: () => {},
   clear: () => {},
 })
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [token, setToken] = useState<string | null>(null)
+const initialState: IAuthState = { user: null, token: null }
 
-  useEffect(() => {
-    const token = localStorage.getItem(TokenStorageKey)
-    if (token) {
-      updateToken(token)
-    }
-  }, [])
+const StateActions = {
+  SetToken: 'SetToken',
+  SetUser: 'SetUser',
+  Reset: 'Reset',
+} as const
+
+type StateAction = { type: keyof typeof StateActions } & Partial<IAuthState>
+
+const actions: Record<keyof typeof StateActions, (s: IAuthState, a: StateAction) => IAuthState> = {
+  [StateActions.SetToken]: (state: IAuthState, action: StateAction) => ({ ...state, token: action.token! }),
+  [StateActions.SetUser]: (state: IAuthState, action: StateAction) => ({ ...state, user: action.user! }),
+  [StateActions.Reset]: (_state: IAuthState, _action: StateAction) => ({ token: null, user: null }),
+} as const
+
+const stateReducer = (state: IAuthState, action: StateAction): IAuthState => {
+  return actions[action.type](state, action)
+}
+
+const initState = () => {
+  const token = localStorage.getItem(TokenStorageKey)
+  const state: IAuthState = {
+    token,
+    user: null,
+  }
+  if (token) {
+    state.user = decodeToken<AuthUser>(token)
+  }
+  return state
+}
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [state, dispatch] = useReducer<(state: IAuthState, action: StateAction) => IAuthState, IAuthState>(
+    stateReducer,
+    initialState,
+    initState
+  )
 
   const updateToken = useCallback((token: string | null) => {
-    setToken(token)
+    dispatch({ type: StateActions.SetToken, token })
     if (token) {
       const decoded = decodeToken<AuthUser>(token)
-      setUser(decoded)
+      dispatch({ type: StateActions.SetUser, user: decoded })
     }
     localStorage.setItem(TokenStorageKey, token as string)
   }, [])
 
   const clear = useCallback(() => {
     localStorage.removeItem(TokenStorageKey)
-    setUser(null)
-    setToken(null)
+    dispatch({ type: StateActions.Reset })
   }, [])
 
   useEffect(() => {
@@ -55,7 +85,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   })
 
-  return <AuthContext.Provider value={{ user, token, clear, updateToken }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user: state.user, token: state.token, clear, updateToken }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => useContext(AuthContext)

@@ -15,18 +15,15 @@ const Dashboard = () => {
   const recent = useMostRecentQuery()
   const countClicks = useCountClicksQuery()
   const count = useCountQuery()
+  const { logOut, isAuthenticated } = useUser()
 
   useEffect(() => {
     const refetch = async () => {
-      await popular.refetch()
-      await recent.refetch()
-      await countClicks.refetch()
-      await count.refetch()
+      await Promise.all([popular.refetch, recent.refetch, countClicks.refetch, count.refetch])
     }
     refetch()
   }, [])
 
-  const { logOut, isAuthenticated } = useUser()
   useEffect(() => {
     if (!isAuthenticated) {
       logOut()
